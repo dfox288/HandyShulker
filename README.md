@@ -1,11 +1,16 @@
 # Handy Shulkers
 
-A Fabric mod for Minecraft 1.21.11 that gives shulker boxes bundle-like inventory interactions.
+A Fabric mod for Minecraft 1.21.11 that makes shulker boxes work like bundles.
+
+Click to insert items, hover to preview contents, and scroll to extract — all without placing the box down.
 
 ## Features
 
-- **Click-to-insert**: Right-click a shulker box on an item in your inventory to insert it into the shulker — just like bundles!
-- **Hover + scroll-to-extract**: Hover over a shulker box to see its contents, scroll with the mousewheel to select an item, and extract it without placing the shulker box.
+- **Click to insert** — Right-click a shulker box on an item in your inventory to insert it, just like bundles.
+- **Hover to preview** — Hover over a shulker box to see its contents in a 9x3 grid tooltip.
+- **Scroll to extract** — Scroll to select an item in the tooltip, then click to extract it.
+- **Fullness bar** — Shulker boxes show a colored bar indicating how full they are.
+- **Mouse Tweaks compatible** — Works cleanly alongside Mouse Tweaks and other inventory mods.
 
 ## Requirements
 
@@ -23,13 +28,10 @@ A Fabric mod for Minecraft 1.21.11 that gives shulker boxes bundle-like inventor
 ## Building from Source
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/handyshulkers.git
-cd handyshulkers
+git clone https://github.com/dfox288/HandyShulker.git
+cd HandyShulker
 
-# Build the mod
 ./gradlew build
-
 # The compiled JAR will be in build/libs/
 ```
 

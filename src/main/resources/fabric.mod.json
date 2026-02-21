@@ -8,9 +8,9 @@
 		"D.Fox"
 	],
 	"contact": {
-		"homepage": "https://github.com/dfox288/HandyShulkers",
-		"sources": "https://github.com/dfox288/HandyShulkers",
-		"issues": "https://github.com/dfox288/HandyShulkers/issues"
+		"homepage": "https://github.com/dfox288/HandyShulker",
+		"sources": "https://github.com/dfox288/HandyShulker",
+		"issues": "https://github.com/dfox288/HandyShulker/issues"
 	},
 	"license": "MIT",
 	"icon": "assets/handyshulkers/icon.png",
