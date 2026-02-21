@@ -24,10 +24,25 @@ Click to insert items, hover to preview contents, and scroll to extract — all 
 
 ## Installation
 
+### Single Player
+
 1. Install Fabric Loader for Minecraft 1.21.11
 2. Download Fabric API and place it in your `mods/` folder
 3. Download Handy Shulker and place it in your `mods/` folder
 4. Launch the game!
+
+### Server
+
+The mod is required on **both the server and all connecting clients**.
+
+**Server setup:**
+1. Install Fabric Loader on your server
+2. Place Fabric API and Handy Shulker in the server's `mods/` folder
+3. Start the server
+
+**Client setup:**
+1. Each player needs Fabric Loader, Fabric API, and Handy Shulker installed
+2. Players without the mod will not be able to use shulker box interactions correctly
 
 ## Building from Source
 

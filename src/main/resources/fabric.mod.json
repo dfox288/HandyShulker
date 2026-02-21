@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "handyshulkers",
 	"version": "${version}",
-	"name": "Handy Shulkers",
+	"name": "Handy Shulker",
 	"description": "Shulker boxes should work like bundles. Click to insert items, hover to preview contents, and scroll to extract - all without placing the box down.",
 	"authors": [
 		"D.Fox"
