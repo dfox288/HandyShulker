@@ -2,6 +2,7 @@ package dev.handyshulkers.mixin;
 
 import dev.handyshulkers.ShulkerBoxHelper;
 import dev.handyshulkers.ShulkerSelectionManager;
+import dev.handyshulkers.config.HandyShulkersConfig;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
@@ -45,9 +46,11 @@ public abstract class ShulkerBoxItemMixin {
 			return;
 		}
 
+		HandyShulkersConfig config = HandyShulkersConfig.get();
 		ItemStack targetStack = slot.getItem();
 
 		if (action == ClickAction.PRIMARY && !targetStack.isEmpty()) {
+			if (!config.enableClickInsert) return;
 			if (ShulkerBoxHelper.canInsert(targetStack)) {
 				int inserted = ShulkerBoxHelper.tryInsert(shulkerStack, targetStack);
 				if (inserted > 0) {
@@ -58,6 +61,7 @@ public abstract class ShulkerBoxItemMixin {
 				cir.setReturnValue(true);
 			}
 		} else if (action == ClickAction.SECONDARY && targetStack.isEmpty()) {
+			if (!config.enableScrollExtract) return;
 			int extractIndex = handyshulkers$getExtractIndex(player, slot.index, shulkerStack);
 			ItemStack extracted = ShulkerBoxHelper.removeOneStack(shulkerStack, extractIndex);
 			if (!extracted.isEmpty()) {
@@ -88,7 +92,10 @@ public abstract class ShulkerBoxItemMixin {
 			return;
 		}
 
+		HandyShulkersConfig config = HandyShulkersConfig.get();
+
 		if (action == ClickAction.PRIMARY && !incomingStack.isEmpty()) {
+			if (!config.enableClickInsert) return;
 			if (ShulkerBoxHelper.canInsert(incomingStack)) {
 				int inserted = ShulkerBoxHelper.tryInsert(shulkerStack, incomingStack);
 				if (inserted > 0) {
@@ -99,6 +106,7 @@ public abstract class ShulkerBoxItemMixin {
 				cir.setReturnValue(true);
 			}
 		} else if (action == ClickAction.SECONDARY && incomingStack.isEmpty()) {
+			if (!config.enableScrollExtract) return;
 			if (slot.allowModification(player)) {
 				int extractIndex = handyshulkers$getExtractIndex(player, slot.index, shulkerStack);
 				ItemStack extracted = ShulkerBoxHelper.removeOneStack(shulkerStack, extractIndex);
@@ -156,14 +164,14 @@ public abstract class ShulkerBoxItemMixin {
 
 	@Inject(method = "isBarVisible", at = @At("HEAD"), cancellable = true)
 	private void handyshulkers$isBarVisible(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-		if (ShulkerBoxHelper.isShulkerBox(stack)) {
+		if (HandyShulkersConfig.get().showFullnessBar && ShulkerBoxHelper.isShulkerBox(stack)) {
 			cir.setReturnValue(ShulkerBoxHelper.getOccupiedSlots(stack) > 0);
 		}
 	}
 
 	@Inject(method = "getBarWidth", at = @At("HEAD"), cancellable = true)
 	private void handyshulkers$getBarWidth(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-		if (ShulkerBoxHelper.isShulkerBox(stack)) {
+		if (HandyShulkersConfig.get().showFullnessBar && ShulkerBoxHelper.isShulkerBox(stack)) {
 			int occupied = ShulkerBoxHelper.getOccupiedSlots(stack);
 			cir.setReturnValue(Math.min(1 + 12 * occupied / ShulkerBoxHelper.SHULKER_SLOTS, 13));
 		}
@@ -171,7 +179,7 @@ public abstract class ShulkerBoxItemMixin {
 
 	@Inject(method = "getBarColor", at = @At("HEAD"), cancellable = true)
 	private void handyshulkers$getBarColor(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-		if (ShulkerBoxHelper.isShulkerBox(stack)) {
+		if (HandyShulkersConfig.get().showFullnessBar && ShulkerBoxHelper.isShulkerBox(stack)) {
 			int occupied = ShulkerBoxHelper.getOccupiedSlots(stack);
 			cir.setReturnValue(occupied >= ShulkerBoxHelper.SHULKER_SLOTS ? FULL_BAR_COLOR : BAR_COLOR);
 		}
@@ -180,24 +188,30 @@ public abstract class ShulkerBoxItemMixin {
 	// -- Sound effects --
 
 	private static void playInsertSound(Player player) {
+		HandyShulkersConfig config = HandyShulkersConfig.get();
+		if (!config.enableSounds) return;
 		player.playSound(
-				net.minecraft.sounds.SoundEvents.BUNDLE_INSERT,
-				0.8F,
+				net.minecraft.sounds.SoundEvents.SHULKER_OPEN,
+				0.4F * config.soundVolume,
 				0.8F + player.level().getRandom().nextFloat() * 0.4F
 		);
 	}
 
 	private static void playInsertFailSound(Player player) {
+		HandyShulkersConfig config = HandyShulkersConfig.get();
+		if (!config.enableSounds) return;
 		player.playSound(
-				net.minecraft.sounds.SoundEvents.BUNDLE_INSERT_FAIL,
-				1.0F, 1.0F
+				net.minecraft.sounds.SoundEvents.SHULKER_HURT_CLOSED,
+				0.3F * config.soundVolume, 0.9F
 		);
 	}
 
 	private static void playRemoveSound(Player player) {
+		HandyShulkersConfig config = HandyShulkersConfig.get();
+		if (!config.enableSounds) return;
 		player.playSound(
-				net.minecraft.sounds.SoundEvents.BUNDLE_REMOVE_ONE,
-				0.8F,
+				net.minecraft.sounds.SoundEvents.SHULKER_CLOSE,
+				0.4F * config.soundVolume,
 				0.8F + player.level().getRandom().nextFloat() * 0.4F
 		);
 	}

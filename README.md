@@ -14,6 +14,7 @@ Click to insert items, hover to preview contents, and scroll to extract — all 
 - **Hover to preview** — Hover over a shulker box to see its contents in a 9x3 grid tooltip.
 - **Scroll to extract** — Scroll to select an item in the tooltip, then click to extract it.
 - **Fullness bar** — Shulker boxes show a colored bar indicating how full they are.
+- **Configurable** — All features individually toggleable via config screen or JSON file.
 - **Mouse Tweaks compatible** — Works cleanly alongside Mouse Tweaks and other inventory mods.
 
 ## Requirements
@@ -21,6 +22,13 @@ Click to insert items, hover to preview contents, and scroll to extract — all 
 - Minecraft Java Edition 1.21.11
 - [Fabric Loader](https://fabricmc.net/use/installer/) 0.18.1+
 - [Fabric API](https://modrinth.com/mod/fabric-api) 0.139.5+
+
+### Optional (for config screen)
+
+- [ModMenu](https://modrinth.com/mod/modmenu) — adds a Configure button in the mod list
+- [YACL](https://modrinth.com/mod/yacl) — powers the in-game config screen
+
+Without these, all features work with sensible defaults. You can also edit `config/handyshulkers.json` manually.
 
 ## Installation
 

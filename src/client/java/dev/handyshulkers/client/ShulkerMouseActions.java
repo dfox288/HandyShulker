@@ -1,8 +1,8 @@
 package dev.handyshulkers.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import dev.handyshulkers.ShulkerBoxHelper;
 import dev.handyshulkers.ShulkerSelectionManager;
+import dev.handyshulkers.config.HandyShulkersConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -64,6 +64,7 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 
 	@Override
 	public boolean matches(Slot slot) {
+		if (!HandyShulkersConfig.get().enableScrollExtract) return false;
 		boolean isShulker = ShulkerBoxHelper.isShulkerBox(slot.getItem());
 		if (isShulker) {
 			lastHoveredSlotIndex = slot.index;
@@ -73,8 +74,8 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 
 	@Override
 	public boolean onMouseScrolled(double scrollX, double scrollY, int slotIndex, ItemStack itemStack) {
-		// In compact mode (Shift held), consume scroll but don't change selection
-		if (isShiftHeld()) {
+		// In compact mode, consume scroll but don't change selection
+		if (ShulkerClientUtil.isCompactMode()) {
 			return true;
 		}
 
@@ -94,15 +95,19 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 
 			if (currentSelection != newSelection) {
 				setSelection(itemStack, slotIndex, newSelection);
+				// Soft tick on scroll selection change
+				HandyShulkersConfig config = HandyShulkersConfig.get();
+				if (config.enableSounds) {
+					this.minecraft.player.playSound(
+							net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME,
+							0.15F * config.soundVolume,
+							1.6F + this.minecraft.player.level().getRandom().nextFloat() * 0.3F
+					);
+				}
 			}
 		}
 
 		return true;
-	}
-
-	private static boolean isShiftHeld() {
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
-				|| InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
 	}
 
 	@Override

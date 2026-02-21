@@ -1,9 +1,8 @@
 package dev.handyshulkers.client;
 
-import com.mojang.blaze3d.platform.InputConstants;
+import dev.handyshulkers.config.HandyShulkersConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -164,7 +163,8 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 
 			// Render item with abbreviated count label
 			guiGraphics.renderItem(item.stack, slotX + 4, slotY + 4);
-			guiGraphics.renderItemDecorations(font, item.stack, slotX + 4, slotY + 4, formatCount(item.totalCount));
+			String countLabel = HandyShulkersConfig.get().showItemCounts ? formatCount(item.totalCount) : "";
+			guiGraphics.renderItemDecorations(font, item.stack, slotX + 4, slotY + 4, countLabel);
 
 			if (isSelected) {
 				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_FRONT_SPRITE, slotX, slotY, SLOT_SIZE, SLOT_SIZE);
@@ -185,6 +185,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	// -- Shared rendering helpers --
 
 	private void drawBorder(GuiGraphics guiGraphics, int x, int y, int w, int h) {
+		if (!HandyShulkersConfig.get().showColoredBorders) return;
 		int borderColor = getBorderColor();
 		guiGraphics.fill(x, y, x + w, y + BORDER, borderColor);
 		guiGraphics.fill(x, y + h - BORDER, x + w, y + h, borderColor);
@@ -204,6 +205,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	}
 
 	private void drawSelectedItemName(Font font, GuiGraphics guiGraphics, int x, int y, int width) {
+		if (!HandyShulkersConfig.get().showItemName) return;
 		int selectedGridIndex = getSelectedGridIndex();
 		if (selectedGridIndex < 0 || selectedGridIndex >= items.size()) return;
 
@@ -247,8 +249,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	// -- Data helpers --
 
 	private static boolean isCompactMode() {
-		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
-				|| InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
+		return ShulkerClientUtil.isCompactMode();
 	}
 
 	private ItemStack getSelectedStack() {

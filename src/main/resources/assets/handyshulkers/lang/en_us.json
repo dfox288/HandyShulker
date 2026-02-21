@@ -1,0 +1,27 @@
+{
+	"config.handyshulkers.title": "Handy Shulker Settings",
+
+	"config.handyshulkers.category.features": "Features",
+	"config.handyshulkers.enableClickInsert": "Click to Insert",
+	"config.handyshulkers.enableClickInsert.desc": "Right-click a shulker box on an item to insert it into the shulker.",
+	"config.handyshulkers.enableScrollExtract": "Scroll to Extract",
+	"config.handyshulkers.enableScrollExtract.desc": "Scroll over a shulker box to select and extract items from it.",
+	"config.handyshulkers.showFullnessBar": "Fullness Bar",
+	"config.handyshulkers.showFullnessBar.desc": "Show a progress bar indicating how full the shulker box is.",
+	"config.handyshulkers.showColoredBorders": "Colored Borders",
+	"config.handyshulkers.showColoredBorders.desc": "Tint tooltip borders to match the shulker box color.",
+
+	"config.handyshulkers.category.sounds": "Sounds",
+	"config.handyshulkers.enableSounds": "Enable Sounds",
+	"config.handyshulkers.enableSounds.desc": "Play sounds when inserting or extracting items from shulker boxes.",
+	"config.handyshulkers.soundVolume": "Sound Volume",
+	"config.handyshulkers.soundVolume.desc": "Volume multiplier for all Handy Shulker sounds.",
+
+	"config.handyshulkers.category.tooltip": "Tooltip",
+	"config.handyshulkers.defaultCompactMode": "Default Compact Mode",
+	"config.handyshulkers.defaultCompactMode.desc": "Show compact tooltip by default. Hold Shift to toggle to grid mode.",
+	"config.handyshulkers.showItemName": "Show Item Name",
+	"config.handyshulkers.showItemName.desc": "Display the selected item name above the tooltip.",
+	"config.handyshulkers.showItemCounts": "Show Item Counts",
+	"config.handyshulkers.showItemCounts.desc": "Show aggregated item count badges in compact mode."
+}

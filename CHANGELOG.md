@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.3.0
+
+### Features
+- **Config screen** — 9 configurable options via YACL + ModMenu (both optional)
+  - Features: toggle click-to-insert, scroll-to-extract, fullness bar, colored borders
+  - Sounds: master toggle and volume slider
+  - Tooltip: default compact mode, item name display, item count badges
+- Config persists as `config/handyshulkers.json` (editable manually without YACL)
+
+### Improvements
+- **Shulker entity sounds** — insert/extract now use shulker open/close sounds instead of bundle sounds
+- **Scroll feedback** — subtle amethyst chime on scroll selection changes
+- All features fully optional and individually toggleable without game restart
+
 ## v1.2.0
 
 ### Features
