@@ -1,7 +1,9 @@
 package dev.handyshulkers.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -10,14 +12,19 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Renders a shulker box tooltip as a 9x3 grid (matching the actual shulker inventory layout).
- * Empty slots are shown as background sprites, occupied slots show their items.
- * The selected item (from scrolling) is highlighted and its name shown above the tooltip.
+ * Renders a shulker box tooltip in two modes:
+ * - Grid mode (default): 9x3 slot grid matching the shulker inventory layout
+ * - Compact mode (hold Shift): packed grid of unique items with aggregated counts, no empty slots
+ *
+ * The tooltip border is tinted to match the shulker box color.
  */
 @Environment(EnvType.CLIENT)
 public class ClientShulkerTooltip implements ClientTooltipComponent {
@@ -30,23 +37,41 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	private static final int ROWS = 3;
 	private static final int SLOT_SIZE = 24;
 	private static final int GRID_WIDTH = COLUMNS * SLOT_SIZE;
+	private static final int BORDER = 2;
+
+	/** Default border color for undyed shulker boxes (vanilla shulker purple) */
+	private static final int DEFAULT_BORDER_COLOR = ARGB.colorFromFloat(0.6F, 0.59F, 0.42F, 0.66F);
 
 	private final List<ItemStack> items;
 	private final int selectedIndex; // Index into non-empty items, -1 if none
+	private final DyeColor color; // null for undyed
+	private final List<UniqueItem> uniqueItems;
 
-	public ClientShulkerTooltip(List<ItemStack> items, int occupiedSlots, int selectedIndex) {
+	public ClientShulkerTooltip(List<ItemStack> items, int occupiedSlots, int selectedIndex,
+								DyeColor color) {
 		this.items = items;
 		this.selectedIndex = selectedIndex;
+		this.color = color;
+		this.uniqueItems = computeUniqueItems();
 	}
 
 	@Override
 	public int getHeight(Font font) {
-		return ROWS * SLOT_SIZE;
+		if (isCompactMode() && !uniqueItems.isEmpty()) {
+			int cols = getCompactColumns();
+			int rows = (uniqueItems.size() + cols - 1) / cols;
+			return rows * SLOT_SIZE + BORDER * 2;
+		}
+		return ROWS * SLOT_SIZE + BORDER * 2;
 	}
 
 	@Override
 	public int getWidth(Font font) {
-		return GRID_WIDTH;
+		if (isCompactMode() && !uniqueItems.isEmpty()) {
+			int cols = getCompactColumns();
+			return cols * SLOT_SIZE + BORDER * 2;
+		}
+		return GRID_WIDTH + BORDER * 2;
 	}
 
 	@Override
@@ -56,14 +81,29 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 
 	@Override
 	public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics guiGraphics) {
-		int offsetX = (width - GRID_WIDTH) / 2;
+		if (isCompactMode() && !uniqueItems.isEmpty()) {
+			renderCompact(font, x, y, width, guiGraphics);
+		} else {
+			renderGrid(font, x, y, width, guiGraphics);
+		}
+	}
+
+	// -- Grid mode rendering (default) --
+
+	private void renderGrid(Font font, int x, int y, int width, GuiGraphics guiGraphics) {
+		int offsetX = (width - GRID_WIDTH - BORDER * 2) / 2;
+		int borderX = x + offsetX;
+		int borderY = y;
+		int gridX = borderX + BORDER;
+		int gridY = borderY + BORDER;
 		int selectedGridIndex = getSelectedGridIndex();
 
-		// Draw the 9x3 grid
+		drawBorder(guiGraphics, borderX, borderY, GRID_WIDTH + BORDER * 2, ROWS * SLOT_SIZE + BORDER * 2);
+
 		for (int row = 0; row < ROWS; row++) {
 			for (int col = 0; col < COLUMNS; col++) {
-				int slotX = x + offsetX + col * SLOT_SIZE;
-				int slotY = y + row * SLOT_SIZE;
+				int slotX = gridX + col * SLOT_SIZE;
+				int slotY = gridY + row * SLOT_SIZE;
 				int index = row * COLUMNS + col;
 				boolean isSelected = (index == selectedGridIndex);
 
@@ -85,14 +125,84 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 			}
 		}
 
-		// Show selected item name above the tooltip (like bundles do)
 		drawSelectedItemName(font, guiGraphics, x, y, width);
 	}
 
+	// -- Compact mode rendering (Shift held) --
+
+	private void renderCompact(Font font, int x, int y, int width, GuiGraphics guiGraphics) {
+		int cols = getCompactColumns();
+		int rows = (uniqueItems.size() + cols - 1) / cols;
+		int totalWidth = cols * SLOT_SIZE + BORDER * 2;
+		int totalHeight = rows * SLOT_SIZE + BORDER * 2;
+		int offsetX = (width - totalWidth) / 2;
+		int borderX = x + offsetX;
+		int borderY = y;
+		int gridX = borderX + BORDER;
+		int gridY = borderY + BORDER;
+
+		drawBorder(guiGraphics, borderX, borderY, totalWidth, totalHeight);
+
+		// Determine selected item for highlighting
+		ItemStack selectedStack = getSelectedStack();
+
+		for (int i = 0; i < uniqueItems.size(); i++) {
+			UniqueItem item = uniqueItems.get(i);
+			int col = i % cols;
+			int row = i / cols;
+			int slotX = gridX + col * SLOT_SIZE;
+			int slotY = gridY + row * SLOT_SIZE;
+
+			boolean isSelected = selectedStack != null
+					&& ItemStack.isSameItemSameComponents(item.stack, selectedStack);
+
+			if (isSelected) {
+				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_BACK_SPRITE, slotX, slotY, SLOT_SIZE, SLOT_SIZE);
+			} else {
+				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_BACKGROUND_SPRITE, slotX, slotY, SLOT_SIZE, SLOT_SIZE);
+			}
+
+			// Render item with abbreviated count label
+			guiGraphics.renderItem(item.stack, slotX + 4, slotY + 4);
+			guiGraphics.renderItemDecorations(font, item.stack, slotX + 4, slotY + 4, formatCount(item.totalCount));
+
+			if (isSelected) {
+				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_FRONT_SPRITE, slotX, slotY, SLOT_SIZE, SLOT_SIZE);
+			}
+		}
+	}
+
 	/**
-	 * Renders the selected item's name in a mini tooltip above the grid,
-	 * matching how vanilla bundles display the hovered item name.
+	 * Number of columns for compact mode — adapts to item count.
 	 */
+	private int getCompactColumns() {
+		int count = uniqueItems.size();
+		if (count <= 4) return count;
+		if (count <= 8) return (count + 1) / 2;
+		return Math.min(count, 9);
+	}
+
+	// -- Shared rendering helpers --
+
+	private void drawBorder(GuiGraphics guiGraphics, int x, int y, int w, int h) {
+		int borderColor = getBorderColor();
+		guiGraphics.fill(x, y, x + w, y + BORDER, borderColor);
+		guiGraphics.fill(x, y + h - BORDER, x + w, y + h, borderColor);
+		guiGraphics.fill(x, y + BORDER, x + BORDER, y + h - BORDER, borderColor);
+		guiGraphics.fill(x + w - BORDER, y + BORDER, x + w, y + h - BORDER, borderColor);
+	}
+
+	private int getBorderColor() {
+		if (color == null) {
+			return DEFAULT_BORDER_COLOR;
+		}
+		int rgb = color.getTextureDiffuseColor();
+		int r = (rgb >> 16) & 0xFF;
+		int g = (rgb >> 8) & 0xFF;
+		int b = rgb & 0xFF;
+		return ARGB.colorFromFloat(0.8F, r / 255.0F, g / 255.0F, b / 255.0F);
+	}
+
 	private void drawSelectedItemName(Font font, GuiGraphics guiGraphics, int x, int y, int width) {
 		int selectedGridIndex = getSelectedGridIndex();
 		if (selectedGridIndex < 0 || selectedGridIndex >= items.size()) return;
@@ -100,7 +210,17 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 		ItemStack selectedStack = items.get(selectedGridIndex);
 		if (selectedStack.isEmpty()) return;
 
-		Component name = selectedStack.getStyledHoverName();
+		int totalCount = getTotalCount(selectedStack);
+
+		Component name;
+		if (totalCount > selectedStack.getCount()) {
+			name = Component.empty()
+					.append(selectedStack.getStyledHoverName())
+					.append(Component.literal(" x" + totalCount).withColor(0xAAAAAA));
+		} else {
+			name = selectedStack.getStyledHoverName();
+		}
+
 		int nameWidth = font.width(name.getVisualOrderText());
 		int centerX = x + width / 2 - 12;
 		ClientTooltipComponent nameComponent = ClientTooltipComponent.create(name.getVisualOrderText());
@@ -115,8 +235,39 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	}
 
 	/**
-	 * Convert the selected non-empty item index to the actual 27-slot grid index.
+	 * Format item count for display, abbreviating large numbers.
 	 */
+	private static String formatCount(int count) {
+		if (count <= 1) return "";
+		if (count < 1000) return String.valueOf(count);
+		if (count < 10000) return String.format("%.1fk", count / 1000.0);
+		return (count / 1000) + "k";
+	}
+
+	// -- Data helpers --
+
+	private static boolean isCompactMode() {
+		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
+				|| InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
+	}
+
+	private ItemStack getSelectedStack() {
+		int gridIndex = getSelectedGridIndex();
+		if (gridIndex < 0 || gridIndex >= items.size()) return null;
+		ItemStack stack = items.get(gridIndex);
+		return stack.isEmpty() ? null : stack;
+	}
+
+	private int getTotalCount(ItemStack target) {
+		int total = 0;
+		for (ItemStack stack : items) {
+			if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, target)) {
+				total += stack.getCount();
+			}
+		}
+		return total;
+	}
+
 	private int getSelectedGridIndex() {
 		if (selectedIndex < 0) return -1;
 
@@ -131,4 +282,24 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 		}
 		return -1;
 	}
+
+	private List<UniqueItem> computeUniqueItems() {
+		List<UniqueItem> result = new ArrayList<>();
+		for (ItemStack stack : items) {
+			if (stack.isEmpty()) continue;
+			boolean found = false;
+			for (UniqueItem existing : result) {
+				if (ItemStack.isSameItemSameComponents(existing.stack, stack)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				result.add(new UniqueItem(stack, getTotalCount(stack)));
+			}
+		}
+		return result;
+	}
+
+	private record UniqueItem(ItemStack stack, int totalCount) {}
 }

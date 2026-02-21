@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.2.0
+
+### Features
+- **Color-tinted tooltip border** — tooltip border matches the shulker box dye color
+- **Item count badges** — selected item shows total count across all slots (e.g., "Cobblestone x204")
+- **Compact mode** — hold Shift to view a condensed grid of unique items with aggregated counts, no empty slots
+- Large counts abbreviated (1000+ → "1.0k", 10000+ → "10k")
+- Scrolling disabled in compact mode to prevent accidental selection changes
+
 ## v1.1.0
 
 ### Improvements

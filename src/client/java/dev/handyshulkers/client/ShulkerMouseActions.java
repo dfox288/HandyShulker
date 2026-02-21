@@ -1,5 +1,6 @@
 package dev.handyshulkers.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.handyshulkers.ShulkerBoxHelper;
 import dev.handyshulkers.ShulkerSelectionManager;
 import net.fabricmc.api.EnvType;
@@ -72,6 +73,11 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 
 	@Override
 	public boolean onMouseScrolled(double scrollX, double scrollY, int slotIndex, ItemStack itemStack) {
+		// In compact mode (Shift held), consume scroll but don't change selection
+		if (isShiftHeld()) {
+			return true;
+		}
+
 		List<ItemStack> contents = ShulkerBoxHelper.getContents(itemStack);
 		// Only count non-empty items for scrolling
 		int itemCount = (int) contents.stream().filter(s -> !s.isEmpty()).count();
@@ -92,6 +98,11 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 		}
 
 		return true;
+	}
+
+	private static boolean isShiftHeld() {
+		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT)
+				|| InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT);
 	}
 
 	@Override

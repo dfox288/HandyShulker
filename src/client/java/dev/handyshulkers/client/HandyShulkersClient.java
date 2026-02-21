@@ -22,7 +22,8 @@ public class HandyShulkersClient implements ClientModInitializer {
 				return new ClientShulkerTooltip(
 						shulkerTooltip.items(),
 						shulkerTooltip.occupiedSlots(),
-						shulkerTooltip.selectedIndex()
+						shulkerTooltip.selectedIndex(),
+						shulkerTooltip.color()
 				);
 			}
 			return null;

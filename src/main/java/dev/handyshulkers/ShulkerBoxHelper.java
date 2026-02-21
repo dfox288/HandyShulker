@@ -3,6 +3,7 @@ package dev.handyshulkers;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
 
 import java.util.ArrayList;
@@ -134,6 +135,17 @@ public final class ShulkerBoxHelper {
 	 */
 	public static int getOccupiedSlots(ItemStack shulkerStack) {
 		return (int) getContents(shulkerStack).stream().filter(s -> !s.isEmpty()).count();
+	}
+
+	/**
+	 * Get the DyeColor of a shulker box, or null if undyed.
+	 */
+	public static DyeColor getColor(ItemStack stack) {
+		if (stack.getItem() instanceof net.minecraft.world.item.BlockItem blockItem
+				&& blockItem.getBlock() instanceof ShulkerBoxBlock shulkerBlock) {
+			return shulkerBlock.getColor();
+		}
+		return null;
 	}
 
 	/**

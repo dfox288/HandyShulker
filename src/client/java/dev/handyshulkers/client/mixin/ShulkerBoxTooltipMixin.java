@@ -5,6 +5,7 @@ import dev.handyshulkers.ShulkerSelectionManager;
 import dev.handyshulkers.ShulkerTooltip;
 import dev.handyshulkers.client.ShulkerMouseActions;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
@@ -53,6 +54,7 @@ public abstract class ShulkerBoxTooltipMixin {
 			}
 		}
 
-		cir.setReturnValue(Optional.of(new ShulkerTooltip(padded, occupied, selectedIndex)));
+		DyeColor color = ShulkerBoxHelper.getColor(stack);
+		cir.setReturnValue(Optional.of(new ShulkerTooltip(padded, occupied, selectedIndex, color)));
 	}
 }
