@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.0
+
+### Improvements
+- Full compatibility with ItemScroller and other MaLiLib-based mods
+- Scroll events are now intercepted at the GLFW input level (MouseHandler), preventing inventory mods from moving shulker boxes while scrolling through their contents
+- Existing Mouse Tweaks compatibility via Fabric screen events remains as a fallback
+
 ## v1.0.0
 
 Initial release for Minecraft 1.21.11 (Fabric).

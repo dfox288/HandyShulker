@@ -4,7 +4,8 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ShulkerBoxTooltipMixin",
-		"ContainerScreenMixin"
+		"ContainerScreenMixin",
+		"MouseHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
