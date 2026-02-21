@@ -1,0 +1,39 @@
+{
+	"schemaVersion": 1,
+	"id": "handyshulkers",
+	"version": "${version}",
+	"name": "Handy Shulkers",
+	"description": "Shulker boxes should work like bundles. Click to insert items, hover to preview contents, and scroll to extract - all without placing the box down.",
+	"authors": [
+		"D.Fox"
+	],
+	"contact": {
+		"homepage": "https://github.com/dfox288/HandyShulkers",
+		"sources": "https://github.com/dfox288/HandyShulkers",
+		"issues": "https://github.com/dfox288/HandyShulkers/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/handyshulkers/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.handyshulkers.HandyShulkers"
+		],
+		"client": [
+			"dev.handyshulkers.client.HandyShulkersClient"
+		]
+	},
+	"mixins": [
+		"handyshulkers.mixins.json",
+		{
+			"config": "handyshulkers.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.1",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

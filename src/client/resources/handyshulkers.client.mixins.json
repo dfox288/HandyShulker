@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "dev.handyshulkers.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ShulkerBoxTooltipMixin",
+		"ContainerScreenMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

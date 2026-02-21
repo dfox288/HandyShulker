@@ -1,0 +1,13 @@
+# Auto detect text files and perform LF normalization
+*          text=auto
+
+*.java     text diff=java
+*.gradle   text diff=java
+*.xml      text
+*.json     text
+*.properties text
+*.md       text diff=markdown
+
+# These files are binary and should be left untouched
+*.jar      binary
+*.png      binary

@@ -31,3 +31,8 @@ Thumbs.db
 # other
 *.jar
 !gradle/wrapper/gradle-wrapper.jar
+
+# claude
+.claude/
+CLAUDE.md
+**/CLAUDE.md
