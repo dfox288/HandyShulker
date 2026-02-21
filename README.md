@@ -1,8 +1,12 @@
-# Handy Shulkers
+# Handy Shulker
+
+![Handy Shulker](handy-shulker-gallery.png)
 
 A Fabric mod for Minecraft 1.21.11 that makes shulker boxes work like bundles.
 
 Click to insert items, hover to preview contents, and scroll to extract — all without placing the box down.
+
+[![Modrinth](https://img.shields.io/badge/Modrinth-handy--shulker-green)](https://modrinth.com/project/handy-shulker)
 
 ## Features
 
@@ -22,7 +26,7 @@ Click to insert items, hover to preview contents, and scroll to extract — all 
 
 1. Install Fabric Loader for Minecraft 1.21.11
 2. Download Fabric API and place it in your `mods/` folder
-3. Download Handy Shulkers and place it in your `mods/` folder
+3. Download Handy Shulker and place it in your `mods/` folder
 4. Launch the game!
 
 ## Building from Source
