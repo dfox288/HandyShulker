@@ -23,5 +23,10 @@
 	"config.handyshulkers.showItemName": "Show Item Name",
 	"config.handyshulkers.showItemName.desc": "Display the selected item name above the tooltip.",
 	"config.handyshulkers.showItemCounts": "Show Item Counts",
-	"config.handyshulkers.showItemCounts.desc": "Show aggregated item count badges in compact mode."
+	"config.handyshulkers.showItemCounts.desc": "Show aggregated item count badges in compact mode.",
+	"config.handyshulkers.tooltipSize": "Tooltip Size",
+	"config.handyshulkers.tooltipSize.desc": "Size of the shulker box tooltip grid. Smaller sizes take up less screen space.",
+	"config.handyshulkers.tooltipSize.small": "Small",
+	"config.handyshulkers.tooltipSize.medium": "Medium",
+	"config.handyshulkers.tooltipSize.large": "Large"
 }

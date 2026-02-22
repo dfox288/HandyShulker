@@ -36,6 +36,7 @@ public class HandyShulkersConfig {
 	public boolean defaultCompactMode = false;
 	public boolean showItemName = true;
 	public boolean showItemCounts = true;
+	public TooltipSize tooltipSize = TooltipSize.LARGE;
 
 	public static HandyShulkersConfig get() {
 		if (INSTANCE == null) {

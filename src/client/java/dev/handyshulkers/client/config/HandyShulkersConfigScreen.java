@@ -1,10 +1,12 @@
 package dev.handyshulkers.client.config;
 
 import dev.handyshulkers.config.HandyShulkersConfig;
+import dev.handyshulkers.config.TooltipSize;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import net.fabricmc.api.EnvType;
@@ -102,6 +104,16 @@ public class HandyShulkersConfigScreen {
 										Component.translatable("config.handyshulkers.showItemCounts.desc")))
 								.binding(true, () -> config.showItemCounts, val -> config.showItemCounts = val)
 								.controller(TickBoxControllerBuilder::create)
+								.build())
+						.option(Option.<TooltipSize>createBuilder()
+								.name(Component.translatable("config.handyshulkers.tooltipSize"))
+								.description(OptionDescription.of(
+										Component.translatable("config.handyshulkers.tooltipSize.desc")))
+								.binding(TooltipSize.LARGE, () -> config.tooltipSize, val -> config.tooltipSize = val)
+								.controller(opt -> EnumControllerBuilder.create(opt)
+										.enumClass(TooltipSize.class)
+										.formatValue(val -> Component.translatable(
+												"config.handyshulkers.tooltipSize." + val.name().toLowerCase())))
 								.build())
 						.build())
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.4.0
+
+### Features
+- **Enchantment details on hover** — selected item tooltip now shows full item info (enchantments, attributes) so you can distinguish between similar items like multiple axes with different enchantments
+- **Tooltip size setting** — new Small / Medium / Large option in config to scale the tooltip grid up or down
+
+### Improvements
+- **Auto-collapsing grid** — empty trailing rows are hidden, so a shulker with a few items shows a compact 1- or 2-row grid instead of the full 3-row layout
+- **Empty shulker boxes** no longer show an empty grid tooltip
+
 ## v1.3.0
 
 ### Features
