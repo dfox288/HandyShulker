@@ -4,7 +4,7 @@ import dev.handyshulkers.config.HandyShulkersConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -102,7 +102,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	}
 
 	@Override
-	public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics guiGraphics) {
+	public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor guiGraphics) {
 		if (isCompactMode() && !uniqueItems.isEmpty()) {
 			renderCompact(font, x, y, width, guiGraphics);
 		} else if (visibleRows() > 0) {
@@ -112,7 +112,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 
 	// -- Grid mode rendering (default) --
 
-	private void renderGrid(Font font, int x, int y, int width, GuiGraphics guiGraphics) {
+	private void renderGrid(Font font, int x, int y, int width, GuiGraphicsExtractor guiGraphics) {
 		int rows = visibleRows();
 		if (rows == 0) return;
 
@@ -143,8 +143,8 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 
 				if (index < items.size() && !items.get(index).isEmpty()) {
 					ItemStack stack = items.get(index);
-					guiGraphics.renderItem(stack, slotX + itemOffset, slotY + itemOffset);
-					guiGraphics.renderItemDecorations(font, stack, slotX + itemOffset, slotY + itemOffset);
+					guiGraphics.item(stack, slotX + itemOffset, slotY + itemOffset);
+					guiGraphics.itemDecorations(font, stack, slotX + itemOffset, slotY + itemOffset);
 				}
 
 				if (isSelected) {
@@ -158,7 +158,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 
 	// -- Compact mode rendering (Shift held) --
 
-	private void renderCompact(Font font, int x, int y, int width, GuiGraphics guiGraphics) {
+	private void renderCompact(Font font, int x, int y, int width, GuiGraphicsExtractor guiGraphics) {
 		int ss = slotSize();
 		int itemOffset = (ss - 16) / 2;
 		int cols = getCompactColumns();
@@ -193,9 +193,9 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 			}
 
 			// Render item with abbreviated count label
-			guiGraphics.renderItem(item.stack, slotX + itemOffset, slotY + itemOffset);
+			guiGraphics.item(item.stack, slotX + itemOffset, slotY + itemOffset);
 			String countLabel = HandyShulkersConfig.get().showItemCounts ? formatCount(item.totalCount) : "";
-			guiGraphics.renderItemDecorations(font, item.stack, slotX + itemOffset, slotY + itemOffset, countLabel);
+			guiGraphics.itemDecorations(font, item.stack, slotX + itemOffset, slotY + itemOffset, countLabel);
 
 			if (isSelected) {
 				guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, SLOT_HIGHLIGHT_FRONT_SPRITE, slotX, slotY, ss, ss);
@@ -215,7 +215,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 
 	// -- Shared rendering helpers --
 
-	private void drawBorder(GuiGraphics guiGraphics, int x, int y, int w, int h) {
+	private void drawBorder(GuiGraphicsExtractor guiGraphics, int x, int y, int w, int h) {
 		if (!HandyShulkersConfig.get().showColoredBorders) return;
 		int borderColor = getBorderColor();
 		guiGraphics.fill(x, y, x + w, y + BORDER, borderColor);
@@ -235,7 +235,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 		return ARGB.colorFromFloat(0.8F, r / 255.0F, g / 255.0F, b / 255.0F);
 	}
 
-	private void drawSelectedItemName(Font font, GuiGraphics guiGraphics, int x, int y, int width) {
+	private void drawSelectedItemName(Font font, GuiGraphicsExtractor guiGraphics, int x, int y, int width) {
 		if (!HandyShulkersConfig.get().showItemName) return;
 		int selectedGridIndex = getSelectedGridIndex();
 		if (selectedGridIndex < 0 || selectedGridIndex >= items.size()) return;
@@ -270,7 +270,7 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 			maxWidth = Math.max(maxWidth, font.width(line.getVisualOrderText()));
 		}
 		int centerX = x + width / 2 - 12;
-		guiGraphics.renderTooltip(
+		guiGraphics.tooltip(
 				font,
 				tooltipComponents,
 				centerX - maxWidth / 2,

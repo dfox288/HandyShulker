@@ -10,7 +10,7 @@ import net.minecraft.client.ScrollWheelHandler;
 import net.minecraft.client.gui.ItemSlotMouseAction;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ServerboundSelectBundleItemPacket;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Vector2i;
@@ -117,8 +117,8 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 	}
 
 	@Override
-	public void onSlotClicked(Slot slot, ClickType clickType) {
-		if (clickType == ClickType.QUICK_MOVE || clickType == ClickType.SWAP) {
+	public void onSlotClicked(Slot slot, ContainerInput clickType) {
+		if (clickType == ContainerInput.QUICK_MOVE || clickType == ContainerInput.SWAP) {
 			clearSelection(slot.getItem(), slot.index);
 		}
 	}

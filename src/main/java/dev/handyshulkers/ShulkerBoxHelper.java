@@ -48,7 +48,7 @@ public final class ShulkerBoxHelper {
 		}
 
 		List<ItemStack> items = new ArrayList<>();
-		contents.stream().forEach(items::add);
+		contents.nonEmptyItemCopyStream().forEach(items::add);
 		return items;
 	}
 
