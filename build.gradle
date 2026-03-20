@@ -12,6 +12,7 @@ base {
 
 repositories {
 	maven { url = "https://maven.terraformersmc.com/" }
+	maven { url = "https://api.modrinth.com/maven" }
 }
 
 loom {
@@ -36,8 +37,17 @@ dependencies {
 	// Fabric API
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// ModMenu integration — compile-only (ModMenu 18.0.0-alpha.5 crashes on 26.1-pre-1)
+	// Config screen (YACL) and mod menu integration — both optional at runtime
+	compileOnly("maven.modrinth:yacl:${project.yacl_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
 	compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+	// Include in dev runtime for testing the config screen
+	localRuntime("maven.modrinth:yacl:${project.yacl_version}") {
+		exclude(group: "net.fabricmc.fabric-api")
+	}
+	localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
