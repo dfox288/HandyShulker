@@ -101,7 +101,7 @@ modrinth {
 	versionType = project.mod_version.contains("-beta") ? "beta" :
 	              project.mod_version.contains("-alpha") ? "alpha" :
 	              project.mod_version.contains("-rc") ? "beta" : "release"
-	uploadFile = remapJar
+	uploadFile = jar
 	gameVersions = [project.minecraft_version]
 	loaders = ["fabric"]
 	dependencies {
