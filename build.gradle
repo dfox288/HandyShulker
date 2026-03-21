@@ -1,6 +1,7 @@
 plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
+	id 'com.modrinth.minotaur' version '2.+'
 }
 
 version = project.mod_version
@@ -89,5 +90,21 @@ publishing {
 	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
 		// Add repositories to publish to here.
+	}
+}
+
+// Modrinth publishing — run with ./gradlew modrinth
+modrinth {
+	token = System.getenv("MODRINTH_TOKEN")
+	projectId = "hEULt5Y8"
+	versionNumber = project.mod_version
+	versionType = project.mod_version.contains("-beta") ? "beta" :
+	              project.mod_version.contains("-alpha") ? "alpha" :
+	              project.mod_version.contains("-rc") ? "beta" : "release"
+	uploadFile = remapJar
+	gameVersions = [project.minecraft_version]
+	loaders = ["fabric"]
+	dependencies {
+		required.project "fabric-api"
 	}
 }
