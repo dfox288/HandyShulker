@@ -2,7 +2,7 @@ package dev.handyshulkers.client;
 
 import dev.handyshulkers.ShulkerTooltip;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.ClientTooltipComponentCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -17,7 +17,7 @@ public class HandyShulkersClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		TooltipComponentCallback.EVENT.register(data -> {
+		ClientTooltipComponentCallback.EVENT.register(data -> {
 			if (data instanceof ShulkerTooltip shulkerTooltip) {
 				return new ClientShulkerTooltip(
 						shulkerTooltip.items(),
