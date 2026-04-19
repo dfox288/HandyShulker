@@ -1,5 +1,6 @@
 package dev.handyshulkers.mixin;
 
+import dev.handyshulkers.HandyContainers;
 import dev.handyshulkers.ShulkerBoxHelper;
 import dev.handyshulkers.ShulkerSelectionManager;
 import dev.handyshulkers.config.HandyShulkersConfig;
@@ -39,10 +40,10 @@ public abstract class ShulkerBoxItemMixin {
 	 */
 	@Inject(method = "overrideStackedOnOther", at = @At("HEAD"), cancellable = true)
 	private void handyshulkers$onStackedOnOther(
-			ItemStack shulkerStack, Slot slot, ClickAction action, Player player,
+			ItemStack containerStack, Slot slot, ClickAction action, Player player,
 			CallbackInfoReturnable<Boolean> cir) {
 
-		if (!ShulkerBoxHelper.isShulkerBox(shulkerStack) || shulkerStack.getCount() != 1) {
+		if (!HandyContainers.isActionAllowed(containerStack, player) || containerStack.getCount() != 1) {
 			return;
 		}
 
@@ -51,8 +52,8 @@ public abstract class ShulkerBoxItemMixin {
 
 		if (action == ClickAction.PRIMARY && !targetStack.isEmpty()) {
 			if (!config.enableClickInsert) return;
-			if (ShulkerBoxHelper.canInsert(targetStack)) {
-				int inserted = ShulkerBoxHelper.tryInsert(shulkerStack, targetStack);
+			if (HandyContainers.canInsert(containerStack, targetStack)) {
+				int inserted = HandyContainers.tryInsert(containerStack, player, targetStack);
 				if (inserted > 0) {
 					playInsertSound(player);
 				} else {
@@ -62,15 +63,16 @@ public abstract class ShulkerBoxItemMixin {
 			}
 		} else if (action == ClickAction.SECONDARY && targetStack.isEmpty()) {
 			if (!config.enableScrollExtract) return;
-			int extractIndex = handyshulkers$getExtractIndex(player, slot.index, shulkerStack);
-			ItemStack extracted = ShulkerBoxHelper.removeOneStack(shulkerStack, extractIndex);
+			int extractIndex = handyshulkers$getExtractIndex(player, slot.index, containerStack);
+			ItemStack extracted = HandyContainers.removeOneStack(containerStack, player, extractIndex);
 			if (!extracted.isEmpty()) {
 				ItemStack remainder = slot.safeInsert(extracted);
 				if (!remainder.isEmpty()) {
-					ShulkerBoxHelper.tryInsert(shulkerStack, remainder);
+					HandyContainers.tryInsert(containerStack, player, remainder);
 				} else {
 					playRemoveSound(player);
 				}
+				handyshulkers$clearSelection(player, slot.index);
 				cir.setReturnValue(true);
 			}
 		}
@@ -84,11 +86,11 @@ public abstract class ShulkerBoxItemMixin {
 	 */
 	@Inject(method = "overrideOtherStackedOnMe", at = @At("HEAD"), cancellable = true)
 	private void handyshulkers$onOtherStackedOnMe(
-			ItemStack shulkerStack, ItemStack incomingStack, Slot slot, ClickAction action,
+			ItemStack containerStack, ItemStack incomingStack, Slot slot, ClickAction action,
 			Player player, SlotAccess slotAccess,
 			CallbackInfoReturnable<Boolean> cir) {
 
-		if (!ShulkerBoxHelper.isShulkerBox(shulkerStack) || shulkerStack.getCount() != 1) {
+		if (!HandyContainers.isActionAllowed(containerStack, player) || containerStack.getCount() != 1) {
 			return;
 		}
 
@@ -96,8 +98,8 @@ public abstract class ShulkerBoxItemMixin {
 
 		if (action == ClickAction.PRIMARY && !incomingStack.isEmpty()) {
 			if (!config.enableClickInsert) return;
-			if (ShulkerBoxHelper.canInsert(incomingStack)) {
-				int inserted = ShulkerBoxHelper.tryInsert(shulkerStack, incomingStack);
+			if (HandyContainers.canInsert(containerStack, incomingStack)) {
+				int inserted = HandyContainers.tryInsert(containerStack, player, incomingStack);
 				if (inserted > 0) {
 					playInsertSound(player);
 				} else {
@@ -108,11 +110,12 @@ public abstract class ShulkerBoxItemMixin {
 		} else if (action == ClickAction.SECONDARY && incomingStack.isEmpty()) {
 			if (!config.enableScrollExtract) return;
 			if (slot.allowModification(player)) {
-				int extractIndex = handyshulkers$getExtractIndex(player, slot.index, shulkerStack);
-				ItemStack extracted = ShulkerBoxHelper.removeOneStack(shulkerStack, extractIndex);
+				int extractIndex = handyshulkers$getExtractIndex(player, slot.index, containerStack);
+				ItemStack extracted = HandyContainers.removeOneStack(containerStack, player, extractIndex);
 				if (!extracted.isEmpty()) {
 					playRemoveSound(player);
 					slotAccess.set(extracted);
+					handyshulkers$clearSelection(player, slot.index);
 				}
 			}
 			cir.setReturnValue(true);
@@ -124,17 +127,15 @@ public abstract class ShulkerBoxItemMixin {
 	 * The selection is the index into the list of NON-EMPTY items (matching scroll behavior).
 	 * We convert it to the actual contents list index.
 	 */
-	private static int handyshulkers$getExtractIndex(Player player, int slotIndex, ItemStack shulkerStack) {
+	private static int handyshulkers$getExtractIndex(Player player, int slotIndex, ItemStack containerStack) {
 		ShulkerSelectionManager manager = (ShulkerSelectionManager) player.containerMenu;
 		int selectedNonEmptyIndex = manager.handyshulkers$getSelection(slotIndex);
 
+		List<ItemStack> contents = HandyContainers.getContents(containerStack, player);
 		if (selectedNonEmptyIndex < 0) {
-			// No selection — extract the first non-empty item
-			return handyshulkers$firstNonEmptyIndex(shulkerStack);
+			return handyshulkers$firstNonEmptyIndex(contents);
 		}
 
-		// Convert non-empty item index to actual contents index
-		List<ItemStack> contents = ShulkerBoxHelper.getContents(shulkerStack);
 		int nonEmptyCount = 0;
 		for (int i = 0; i < contents.size(); i++) {
 			if (!contents.get(i).isEmpty()) {
@@ -144,17 +145,27 @@ public abstract class ShulkerBoxItemMixin {
 				nonEmptyCount++;
 			}
 		}
-
-		// Selection out of range, fall back to first non-empty
-		return handyshulkers$firstNonEmptyIndex(shulkerStack);
+		return handyshulkers$firstNonEmptyIndex(contents);
 	}
 
-	private static int handyshulkers$firstNonEmptyIndex(ItemStack shulkerStack) {
-		List<ItemStack> contents = ShulkerBoxHelper.getContents(shulkerStack);
+	private static int handyshulkers$firstNonEmptyIndex(List<ItemStack> contents) {
 		for (int i = 0; i < contents.size(); i++) {
 			if (!contents.get(i).isEmpty()) return i;
 		}
 		return 0;
+	}
+
+	/**
+	 * Clear the scroll-selection for a slot after a successful extract. Without
+	 * this, rapid right-clicks would re-interpret the same non-empty index
+	 * against shifted contents and pull "the next" item, which feels wrong
+	 * when positions are preserved (as they are for both shulkers and ender
+	 * chests). The user can scroll again to re-target.
+	 */
+	private static void handyshulkers$clearSelection(Player player, int slotIndex) {
+		if (player.containerMenu instanceof ShulkerSelectionManager manager) {
+			manager.handyshulkers$clearSelection(slotIndex);
+		}
 	}
 
 	// -- Fullness bar (matches bundle style) --

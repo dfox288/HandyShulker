@@ -44,13 +44,15 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	private final List<ItemStack> items;
 	private final int selectedIndex; // Index into non-empty items, -1 if none
 	private final DyeColor color; // null for undyed
+	private final boolean isEnderChest;
 	private final List<UniqueItem> uniqueItems;
 
 	public ClientShulkerTooltip(List<ItemStack> items, int occupiedSlots, int selectedIndex,
-								DyeColor color) {
+								DyeColor color, boolean isEnderChest) {
 		this.items = items;
 		this.selectedIndex = selectedIndex;
 		this.color = color;
+		this.isEnderChest = isEnderChest;
 		this.uniqueItems = computeUniqueItems();
 	}
 
@@ -59,10 +61,16 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	}
 
 	/**
-	 * Number of visible rows in grid mode — only rows containing at least one item.
-	 * Returns 0 for an empty shulker box.
+	 * Number of visible rows in grid mode.
+	 *
+	 * Auto-collapses to the last occupied row by default; returns the full 3 rows
+	 * when {@code showAllSlots} is enabled, so users who prefer a stable layout
+	 * always see the complete shulker inventory grid.
 	 */
 	private int visibleRows() {
+		if (HandyShulkersConfig.get().showAllSlots) {
+			return (items.size() + COLUMNS - 1) / COLUMNS;
+		}
 		int lastOccupiedRow = -1;
 		for (int i = 0; i < items.size(); i++) {
 			if (!items.get(i).isEmpty()) {
@@ -225,6 +233,9 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 	}
 
 	private int getBorderColor() {
+		if (isEnderChest) {
+			return getEnderGlowColor();
+		}
 		if (color == null) {
 			return DEFAULT_BORDER_COLOR;
 		}
@@ -233,6 +244,24 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 		int g = (rgb >> 8) & 0xFF;
 		int b = rgb & 0xFF;
 		return ARGB.colorFromFloat(0.8F, r / 255.0F, g / 255.0F, b / 255.0F);
+	}
+
+	/**
+	 * Animated ender-glow border: slowly cycles through cyan → magenta → violet,
+	 * matching the ender-eye aesthetic. Keeps the tooltip border visually distinct
+	 * from dyed shulker boxes.
+	 */
+	private static int getEnderGlowColor() {
+		float phase = (System.currentTimeMillis() % 2400L) / 2400.0F; // 2.4 s full cycle
+		float angle = phase * (float) (Math.PI * 2.0);
+		// Desaturated ender palette — baselines close to mid-gray, small swing
+		float r = 0.32F + 0.18F * (float) Math.sin(angle);
+		float g = 0.38F + 0.16F * (float) Math.sin(angle + 2.094F);  // +120°
+		float b = 0.48F + 0.18F * (float) Math.sin(angle + 4.189F);  // +240°
+		return ARGB.colorFromFloat(0.75F,
+				Math.max(0F, Math.min(1F, r)),
+				Math.max(0F, Math.min(1F, g)),
+				Math.max(0F, Math.min(1F, b)));
 	}
 
 	private void drawSelectedItemName(Font font, GuiGraphicsExtractor guiGraphics, int x, int y, int width) {

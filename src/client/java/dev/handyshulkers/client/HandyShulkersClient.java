@@ -1,11 +1,20 @@
 package dev.handyshulkers.client;
 
 import dev.handyshulkers.ShulkerTooltip;
+import dev.handyshulkers.net.HandyShulkersPayloads;
+import dev.handyshulkers.net.SyncEnderChestPayload;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ClientTooltipComponentCallback;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
+import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
 
 /**
  * Client-side initialization for Handy Shulkers.
@@ -17,13 +26,26 @@ public class HandyShulkersClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		HandyShulkersPayloads.registerAll();
+
+		ClientPlayNetworking.registerGlobalReceiver(SyncEnderChestPayload.ID, (payload, ctx) -> {
+			Player player = Minecraft.getInstance().player;
+			if (player == null) return;
+			PlayerEnderChestContainer inv = player.getEnderChestInventory();
+			List<ItemStack> items = payload.items();
+			for (int i = 0; i < 27; i++) {
+				inv.setItem(i, i < items.size() ? items.get(i).copy() : ItemStack.EMPTY);
+			}
+		});
+
 		ClientTooltipComponentCallback.EVENT.register(data -> {
 			if (data instanceof ShulkerTooltip shulkerTooltip) {
 				return new ClientShulkerTooltip(
 						shulkerTooltip.items(),
 						shulkerTooltip.occupiedSlots(),
 						shulkerTooltip.selectedIndex(),
-						shulkerTooltip.color()
+						shulkerTooltip.color(),
+						shulkerTooltip.isEnderChest()
 				);
 			}
 			return null;

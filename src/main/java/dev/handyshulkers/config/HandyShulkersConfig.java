@@ -25,6 +25,7 @@ public class HandyShulkersConfig {
 	// -- Features --
 	public boolean enableClickInsert = true;
 	public boolean enableScrollExtract = true;
+	public boolean enableEnderChestSupport = true;
 	public boolean showFullnessBar = true;
 	public boolean showColoredBorders = true;
 
@@ -34,8 +35,10 @@ public class HandyShulkersConfig {
 
 	// -- Tooltip --
 	public boolean defaultCompactMode = false;
+	public CompactModeKey compactModeKey = CompactModeKey.SHIFT;
 	public boolean showItemName = true;
 	public boolean showItemCounts = true;
+	public boolean showAllSlots = false;
 	public TooltipSize tooltipSize = TooltipSize.LARGE;
 
 	public static HandyShulkersConfig get() {

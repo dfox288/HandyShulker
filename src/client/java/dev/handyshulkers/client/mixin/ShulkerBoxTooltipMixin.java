@@ -1,5 +1,7 @@
 package dev.handyshulkers.client.mixin;
 
+import dev.handyshulkers.EnderChestHelper;
+import dev.handyshulkers.HandyContainers;
 import dev.handyshulkers.ShulkerBoxHelper;
 import dev.handyshulkers.ShulkerSelectionManager;
 import dev.handyshulkers.ShulkerTooltip;
@@ -28,11 +30,13 @@ public abstract class ShulkerBoxTooltipMixin {
 
 	@Inject(method = "getTooltipImage", at = @At("HEAD"), cancellable = true)
 	private void handyshulkers$getTooltipImage(ItemStack stack, CallbackInfoReturnable<Optional<TooltipComponent>> cir) {
-		if (!ShulkerBoxHelper.isShulkerBox(stack)) {
+		if (!HandyContainers.isSupported(stack)) {
 			return;
 		}
 
-		List<ItemStack> contents = ShulkerBoxHelper.getContents(stack);
+		Minecraft mc = Minecraft.getInstance();
+		List<ItemStack> contents = HandyContainers.getContents(stack, mc.player);
+		if (contents.isEmpty()) return;
 
 		// Pad to 27 slots so the renderer shows empty slots
 		List<ItemStack> padded = new ArrayList<>(ShulkerBoxHelper.SHULKER_SLOTS);
@@ -46,15 +50,13 @@ public abstract class ShulkerBoxTooltipMixin {
 		// Read the current selection from the container menu
 		int selectedIndex = -1;
 		int hoveredSlot = ShulkerMouseActions.lastHoveredSlotIndex;
-		if (hoveredSlot >= 0) {
-			Minecraft mc = Minecraft.getInstance();
-			if (mc.player != null && mc.player.containerMenu != null) {
-				ShulkerSelectionManager manager = (ShulkerSelectionManager) mc.player.containerMenu;
-				selectedIndex = manager.handyshulkers$getSelection(hoveredSlot);
-			}
+		if (hoveredSlot >= 0 && mc.player != null && mc.player.containerMenu != null) {
+			ShulkerSelectionManager manager = (ShulkerSelectionManager) mc.player.containerMenu;
+			selectedIndex = manager.handyshulkers$getSelection(hoveredSlot);
 		}
 
-		DyeColor color = ShulkerBoxHelper.getColor(stack);
-		cir.setReturnValue(Optional.of(new ShulkerTooltip(padded, occupied, selectedIndex, color)));
+		DyeColor color = HandyContainers.getColor(stack);
+		boolean isEnderChest = EnderChestHelper.isEnderChest(stack);
+		cir.setReturnValue(Optional.of(new ShulkerTooltip(padded, occupied, selectedIndex, color, isEnderChest)));
 	}
 }

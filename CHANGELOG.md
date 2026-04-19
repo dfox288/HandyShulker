@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0
+
+### Bug fixes
+- **Item loss on insert fixed** — inserting items into a shulker while its last slot was occupied could silently drop the new stack once the box was placed. The helper now operates on a fixed 27-slot list and fills empty positions by index instead of appending, so slot positions are preserved across insert/extract and items can no longer overflow. (fixes #4)
+- **Extract no longer "walks" to the next item** — the scroll selection is now cleared after each extract, so rapid right-clicks don't drift through the shulker/ender chest in ways that were hard to predict.
+
+### Features
+- **Ender chest support** — click-to-insert, scroll-to-extract and tooltip previews now also work on ender chests. Contents are synced from the server on login and on every ender chest close so the preview is always accurate. Disabled in creative mode (server-authoritative state isn't reachable from creative slot packets); toggleable for survival via **Ender Chest Support** in the Features tab. (fixes #2)
+- **Animated ender-glow tooltip border** — ender chest tooltips get a subtle cycling glow so they're visually distinct from dyed shulkers.
+- **Configurable compact-mode modifier** — the compact-tooltip hotkey is no longer hard-coded to Shift. Choose Shift, Ctrl, Alt, or **None** (disables toggling entirely) under the Tooltip tab. (fixes #3)
+- **Show all slots option** — new toggle to always render the full 3×9 tooltip grid including empty slots, for users who prefer a stable layout over the auto-collapsing default. (fixes #1)
+
 ## 2.0.2
 
 - Update to Minecraft 26.1.2 compatibility
