@@ -2,7 +2,7 @@
 
 ![Handy Shulker](handy-shulker-gallery.png)
 
-A Fabric mod for Minecraft 1.21.11 that makes shulker boxes work like bundles.
+A Fabric mod for Minecraft 26.1.x that makes shulker boxes work like bundles.
 
 Click to insert items, hover to preview contents, and scroll to extract — all without placing the box down.
 
@@ -19,9 +19,9 @@ Click to insert items, hover to preview contents, and scroll to extract — all 
 
 ## Requirements
 
-- Minecraft Java Edition 1.21.11
-- [Fabric Loader](https://fabricmc.net/use/installer/) 0.18.1+
-- [Fabric API](https://modrinth.com/mod/fabric-api) 0.139.5+
+- Minecraft Java Edition 26.1.x
+- [Fabric Loader](https://fabricmc.net/use/installer/) 0.19.2+
+- [Fabric API](https://modrinth.com/mod/fabric-api) matching your Minecraft version
 
 ### Optional (for config screen)
 
@@ -34,7 +34,7 @@ Without these, all features work with sensible defaults. You can also edit `conf
 
 ### Single Player
 
-1. Install Fabric Loader for Minecraft 1.21.11
+1. Install Fabric Loader for Minecraft 26.1.x
 2. Download Fabric API and place it in your `mods/` folder
 3. Download Handy Shulker and place it in your `mods/` folder
 4. Launch the game!
@@ -71,6 +71,14 @@ cd HandyShulker
 # Run Minecraft with the mod loaded
 ./gradlew runClient
 ```
+
+## Part of the Handy series
+
+Small Fabric mods that smooth over vanilla friction points:
+
+- [Handy Bookshelf](https://modrinth.com/mod/handy-bookshelf) — enchantment glint and name tags for chiseled bookshelves
+- [Handy Trader](https://modrinth.com/mod/handy-trader) — bookmark your favorite villager trades
+- [Handy Indicator](https://modrinth.com/mod/handy-indicator) — visual indicators on container blocks
 
 ## License
 
