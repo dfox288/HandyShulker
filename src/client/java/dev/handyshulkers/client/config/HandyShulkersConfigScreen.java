@@ -1,5 +1,6 @@
 package dev.handyshulkers.client.config;
 
+import dev.handyshulkers.config.CompactModeKey;
 import dev.handyshulkers.config.HandyShulkersConfig;
 import dev.handyshulkers.config.TooltipSize;
 import dev.isxander.yacl3.api.ConfigCategory;
@@ -42,6 +43,13 @@ public class HandyShulkersConfigScreen {
 								.description(OptionDescription.of(
 										Component.translatable("config.handyshulkers.enableScrollExtract.desc")))
 								.binding(true, () -> config.enableScrollExtract, val -> config.enableScrollExtract = val)
+								.controller(TickBoxControllerBuilder::create)
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Component.translatable("config.handyshulkers.enableEnderChestSupport"))
+								.description(OptionDescription.of(
+										Component.translatable("config.handyshulkers.enableEnderChestSupport.desc")))
+								.binding(true, () -> config.enableEnderChestSupport, val -> config.enableEnderChestSupport = val)
 								.controller(TickBoxControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()
@@ -89,6 +97,23 @@ public class HandyShulkersConfigScreen {
 								.description(OptionDescription.of(
 										Component.translatable("config.handyshulkers.defaultCompactMode.desc")))
 								.binding(false, () -> config.defaultCompactMode, val -> config.defaultCompactMode = val)
+								.controller(TickBoxControllerBuilder::create)
+								.build())
+						.option(Option.<CompactModeKey>createBuilder()
+								.name(Component.translatable("config.handyshulkers.compactModeKey"))
+								.description(OptionDescription.of(
+										Component.translatable("config.handyshulkers.compactModeKey.desc")))
+								.binding(CompactModeKey.SHIFT, () -> config.compactModeKey, val -> config.compactModeKey = val)
+								.controller(opt -> EnumControllerBuilder.create(opt)
+										.enumClass(CompactModeKey.class)
+										.formatValue(val -> Component.translatable(
+												"config.handyshulkers.compactModeKey." + val.name().toLowerCase())))
+								.build())
+						.option(Option.<Boolean>createBuilder()
+								.name(Component.translatable("config.handyshulkers.showAllSlots"))
+								.description(OptionDescription.of(
+										Component.translatable("config.handyshulkers.showAllSlots.desc")))
+								.binding(false, () -> config.showAllSlots, val -> config.showAllSlots = val)
 								.controller(TickBoxControllerBuilder::create)
 								.build())
 						.option(Option.<Boolean>createBuilder()

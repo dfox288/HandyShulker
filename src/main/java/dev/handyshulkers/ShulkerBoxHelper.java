@@ -38,17 +38,25 @@ public final class ShulkerBoxHelper {
 	}
 
 	/**
-	 * Get the contents of a shulker box as a mutable list.
-	 * Returns empty list if the shulker has no contents.
+	 * Get the contents of a shulker box as a mutable 27-slot list.
+	 *
+	 * Empty slots are preserved by position (ItemStack.EMPTY at that index) so
+	 * slot positions survive insert/remove round-trips. Without this guarantee
+	 * the internal CONTAINER list can grow past 27 and items at index ≥ 27 get
+	 * silently dropped when the block entity calls copyInto() on place (#4).
 	 */
 	public static List<ItemStack> getContents(ItemStack shulkerStack) {
+		List<ItemStack> items = new ArrayList<>(SHULKER_SLOTS);
 		ItemContainerContents contents = shulkerStack.get(DataComponents.CONTAINER);
-		if (contents == null) {
-			return new ArrayList<>();
+		if (contents != null) {
+			contents.allItemsCopyStream().forEach(items::add);
 		}
-
-		List<ItemStack> items = new ArrayList<>();
-		contents.nonEmptyItemCopyStream().forEach(items::add);
+		while (items.size() < SHULKER_SLOTS) {
+			items.add(ItemStack.EMPTY);
+		}
+		if (items.size() > SHULKER_SLOTS) {
+			items.subList(SHULKER_SLOTS, items.size()).clear();
+		}
 		return items;
 	}
 
@@ -74,9 +82,10 @@ public final class ShulkerBoxHelper {
 		List<ItemStack> contents = getContents(shulkerStack);
 		int inserted = 0;
 
-		// First, try to merge with existing stacks
-		for (ItemStack existing : contents) {
-			if (inserted >= toInsert.getCount()) break;
+		// Merge into matching stacks at their existing positions.
+		for (int i = 0; i < contents.size() && inserted < toInsert.getCount(); i++) {
+			ItemStack existing = contents.get(i);
+			if (existing.isEmpty()) continue;
 			if (ItemStack.isSameItemSameComponents(existing, toInsert)) {
 				int space = existing.getMaxStackSize() - existing.getCount();
 				if (space > 0) {
@@ -87,15 +96,12 @@ public final class ShulkerBoxHelper {
 			}
 		}
 
-		// Then, try to add to empty slots
-		if (inserted < toInsert.getCount()) {
-			int occupiedSlots = (int) contents.stream().filter(s -> !s.isEmpty()).count();
-			while (inserted < toInsert.getCount() && occupiedSlots < SHULKER_SLOTS) {
+		// Fill empty slots by index — never append past SHULKER_SLOTS.
+		for (int i = 0; i < contents.size() && inserted < toInsert.getCount(); i++) {
+			if (contents.get(i).isEmpty()) {
 				int toAdd = Math.min(toInsert.getMaxStackSize(), toInsert.getCount() - inserted);
-				ItemStack newStack = toInsert.copyWithCount(toAdd);
-				contents.add(newStack);
+				contents.set(i, toInsert.copyWithCount(toAdd));
 				inserted += toAdd;
-				occupiedSlots++;
 			}
 		}
 
@@ -117,7 +123,11 @@ public final class ShulkerBoxHelper {
 			return ItemStack.EMPTY;
 		}
 
-		ItemStack removed = contents.remove(index);
+		ItemStack removed = contents.get(index);
+		if (removed.isEmpty()) {
+			return ItemStack.EMPTY;
+		}
+		contents.set(index, ItemStack.EMPTY);
 		setContents(shulkerStack, contents);
 		return removed;
 	}

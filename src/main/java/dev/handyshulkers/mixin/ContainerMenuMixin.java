@@ -1,6 +1,6 @@
 package dev.handyshulkers.mixin;
 
-import dev.handyshulkers.ShulkerBoxHelper;
+import dev.handyshulkers.HandyContainers;
 import dev.handyshulkers.ShulkerSelectionManager;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.core.NonNullList;
@@ -61,7 +61,7 @@ public abstract class ContainerMenuMixin implements ShulkerSelectionManager {
 	private void handyshulkers$onSetSelectedBundleItemIndex(int slotId, int selectedItemIndex, CallbackInfo ci) {
 		if (slotId >= 0 && slotId < slots.size()) {
 			ItemStack stack = slots.get(slotId).getItem();
-			if (ShulkerBoxHelper.isShulkerBox(stack)) {
+			if (HandyContainers.isSupported(stack)) {
 				handyshulkers$setSelection(slotId, selectedItemIndex);
 			}
 		}

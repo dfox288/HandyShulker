@@ -1,5 +1,6 @@
 package dev.handyshulkers.client;
 
+import dev.handyshulkers.HandyContainers;
 import dev.handyshulkers.ShulkerBoxHelper;
 import dev.handyshulkers.ShulkerSelectionManager;
 import dev.handyshulkers.config.HandyShulkersConfig;
@@ -57,7 +58,7 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 
 		Slot slot = mc.player.containerMenu.slots.get(slotIndex);
 		ItemStack stack = slot.getItem();
-		if (!ShulkerBoxHelper.isShulkerBox(stack)) return false;
+		if (!HandyContainers.isActionAllowed(stack, mc.player)) return false;
 
 		return activeInstance.onMouseScrolled(scrollX, scrollY, slotIndex, stack);
 	}
@@ -65,11 +66,11 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 	@Override
 	public boolean matches(Slot slot) {
 		if (!HandyShulkersConfig.get().enableScrollExtract) return false;
-		boolean isShulker = ShulkerBoxHelper.isShulkerBox(slot.getItem());
-		if (isShulker) {
+		boolean allowed = HandyContainers.isActionAllowed(slot.getItem(), this.minecraft.player);
+		if (allowed) {
 			lastHoveredSlotIndex = slot.index;
 		}
-		return isShulker;
+		return allowed;
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 			return true;
 		}
 
-		List<ItemStack> contents = ShulkerBoxHelper.getContents(itemStack);
+		List<ItemStack> contents = HandyContainers.getContents(itemStack, this.minecraft.player);
 		// Only count non-empty items for scrolling
 		int itemCount = (int) contents.stream().filter(s -> !s.isEmpty()).count();
 		if (itemCount == 0) {

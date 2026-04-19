@@ -5,7 +5,8 @@
 	"mixins": [
 		"ShulkerBoxItemMixin",
 		"ContainerMenuMixin",
-		"ItemStackMixin"
+		"ItemStackMixin",
+		"PlayerEnderChestContainerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
