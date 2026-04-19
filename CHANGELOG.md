@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0-beta.1
+
+- Preview build for Minecraft **26.2 snapshots** (tested against 26.2-snapshot-3)
+- Rebuilt against Fabric API 0.146.1+26.2
+- Adapted `MouseHandlerMixin` to the 26.2 screen refactor: `Minecraft.screen` moved onto `Gui`, so the scroll hook now reads `minecraft.gui.screen()` when checking for an open container screen
+
 ## 2.1.0
 
 ### Bug fixes
