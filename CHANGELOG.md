@@ -6,6 +6,17 @@
 - **Mod ID renamed from `handyshulkers` to `handyshulker`** to match the rest of the Handy series convention (singular). Existing config at `config/handyshulkers.json` is migrated automatically on first launch — no settings lost.
 - Internal package moved from `dev.handyshulkers` to `dev.handy.mods.handyshulker`. No user-facing impact unless another mod was depending on internal classes.
 
+### Bug fixes
+- **Fixed rare `ClassCastException` on shulker scroll-extract** when another mod constructed an `AbstractContainerMenu` subclass that loaded before our mixin applied. The cast is now guarded by an `instanceof` check with a sane fallback.
+- **Ender chests can now hold ender chest items.** The "no nested containers" rule was a copy-paste of the shulker-box rule and didn't actually apply — ender chest items don't carry their own contents, so dropping ender chests into your ender chest is just storing items.
+
+### Changes
+- **Config persistence rebuilt on YACL `ConfigClassHandler`** (matches the rest of the Handy suite). On-disk JSON shape is unchanged; users without YACL installed still run on defaults, and dedicated servers no longer touch any YACL classes at all.
+- **CI release workflow fixed for prerelease tags** — the grep that detects `-beta`/`-alpha`/`-rc` was failing silently because the regex started with `-`, which both GNU and BSD grep parse as a flag list. The CurseForge upload step is also now gated to stable releases (snapshot betas only ship to Modrinth + GitHub Releases until Overwolf catalogs the MC version).
+
+### Internal
+- Cleanup wave aligned this mod with the rest of the suite — JAVA_25 mixin compatibility level, full `@At` descriptors on every inject, FastUtil `Int2IntMap` on the per-slot selection hot path, deduplicated insert/remove algorithms via a new `SlotAccessor` interface, mixin renames to reflect their `Item.class` target, encapsulated mutable globals, narrowed exception handlers, named magic numbers, and a `Math.clamp` swap for the ender-glow color sweep.
+
 ## 2.1.0-beta.1
 
 - Preview build for Minecraft **26.2 snapshots** (tested against 26.2-snapshot-3)

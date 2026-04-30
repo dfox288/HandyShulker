@@ -11,7 +11,7 @@ Proposals from two independent analyses of the codebase (Feb 2026).
 
 Shift+right-click a shulker box on an item to insert ALL matching items from your inventory into it, not just one stack. If you have 5 stacks of cobblestone scattered across your inventory, they all get vacuumed in (space permitting).
 
-- Extend `ShulkerBoxItemMixin.handyshulkers$onStackedOnOther()` to detect shift via `player.isShiftKeyDown()`
+- Extend `ItemShulkerInteractionMixin.handyshulker$onStackedOnOther()` to detect shift via `player.isShiftKeyDown()`
 - Iterate `player.getInventory().items` for `isSameItemSameComponents` matches, call `tryInsert` in a loop
 - Server-safe: `isShiftKeyDown()` is server-authoritative, no custom packets needed
 - Add config toggle `enableBulkInsert`

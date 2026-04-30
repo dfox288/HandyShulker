@@ -39,7 +39,7 @@ HandyShulker/
 │   │   │   ├── HandyShulker.java        # Main mod entrypoint
 │   │   │   ├── ShulkerBoxHelper.java     # Utility: read/write shulker contents
 │   │   │   └── mixin/
-│   │   │       └── ShulkerBoxItemMixin.java  # Click-to-insert behavior
+│   │   │       └── ItemShulkerInteractionMixin.java  # Click-to-insert behavior
 │   │   └── resources/
 │   │       ├── fabric.mod.json           # Mod descriptor
 │   │       └── handyshulker.mixins.json # Mixin config (shared)
@@ -47,7 +47,7 @@ HandyShulker/
 │       ├── java/dev/handy/mods/handyshulker/client/
 │       │   ├── HandyShulkerClient.java  # Client entrypoint
 │       │   └── mixin/
-│       │       └── ShulkerBoxTooltipMixin.java  # Tooltip + scroll behavior
+│       │       └── ItemShulkerTooltipMixin.java  # Tooltip + scroll behavior
 │       └── resources/
 │           └── handyshulker.client.mixins.json  # Client mixin config
 ```
@@ -118,7 +118,7 @@ After running `genSources`, examine these classes (Mojang mapping names):
 ## Implementation Strategy
 
 ### Feature 1: Click-to-insert (PARTIALLY IMPLEMENTED)
-The `ShulkerBoxItemMixin` already has the basic structure. It mixins into `BlockItem` and checks if the item is a shulker box. The `ShulkerBoxHelper` utility handles the actual insertion logic.
+The `ItemShulkerInteractionMixin` already has the basic structure. It mixins into `Item` (not `BlockItem` — the `overrideStackedOnOther` / `overrideOtherStackedOnMe` hooks live on `Item`) and checks `isShulkerBox`/`isEnderChest` to early-exit on irrelevant items. The `ShulkerBoxHelper` and `EnderChestHelper` utilities handle the actual insertion logic; both delegate to the shared `SlotOps` algorithms via a `SlotAccessor` adapter.
 
 **What needs verification/completion:**
 - Verify method signatures match 1.21.11's actual `BlockItem` class
