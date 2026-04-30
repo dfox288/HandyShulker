@@ -4,15 +4,12 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import dev.handy.mods.handyshulker.config.CompactModeKey;
 import dev.handy.mods.handyshulker.config.HandyShulkerConfig;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 /**
  * Shared client-side utilities for shulker tooltip behavior.
  */
-@Environment(EnvType.CLIENT)
 public final class ShulkerClientUtil {
 
 	private ShulkerClientUtil() {}

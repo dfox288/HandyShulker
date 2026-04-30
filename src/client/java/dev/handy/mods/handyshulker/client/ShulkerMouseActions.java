@@ -4,8 +4,6 @@ import dev.handy.mods.handyshulker.HandyContainers;
 import dev.handy.mods.handyshulker.ShulkerBoxHelper;
 import dev.handy.mods.handyshulker.ShulkerSelectionManager;
 import dev.handy.mods.handyshulker.config.HandyShulkerConfig;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ScrollWheelHandler;
 import net.minecraft.client.gui.ItemSlotMouseAction;
@@ -24,7 +22,6 @@ import java.util.List;
  *
  * Reuses the ServerboundSelectBundleItemPacket to sync the selection with the server.
  */
-@Environment(EnvType.CLIENT)
 public class ShulkerMouseActions implements ItemSlotMouseAction {
 
 	/** Slot index currently being hovered, or -1 if none. Read by external mixins

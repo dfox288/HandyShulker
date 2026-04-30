@@ -10,8 +10,6 @@ import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -19,7 +17,6 @@ import net.minecraft.network.chat.Component;
  * Builds the YACL config screen with 3 categories:
  * Features, Sounds, and Tooltip.
  */
-@Environment(EnvType.CLIENT)
 public class HandyShulkerConfigScreen {
 
 	public static Screen create(Screen parent) {

@@ -1,8 +1,6 @@
 package dev.handy.mods.handyshulker.client;
 
 import dev.handy.mods.handyshulker.config.HandyShulkerConfig;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -28,7 +26,6 @@ import java.util.List;
  *
  * The tooltip border is tinted to match the shulker box color.
  */
-@Environment(EnvType.CLIENT)
 public class ClientShulkerTooltip implements ClientTooltipComponent {
 
 	private static final Identifier SLOT_BACKGROUND_SPRITE = Identifier.withDefaultNamespace("container/bundle/slot_background");
