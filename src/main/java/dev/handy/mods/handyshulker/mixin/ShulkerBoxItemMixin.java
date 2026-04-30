@@ -20,14 +20,27 @@ import java.util.List;
 
 /**
  * Mixin into Item to add bundle-like click behavior for shulker boxes.
- * We target Item because overrideStackedOnOther/overrideOtherStackedOnMe
- * are defined on Item, not BlockItem.
  *
- * Interactions (mirroring bundle behavior):
- * - Left-click shulker ON item → insert item into shulker
- * - Left-click item ON shulker → insert item into shulker
- * - Right-click shulker ON empty slot → extract selected item from shulker
- * - Right-click empty cursor ON shulker → extract selected item from shulker
+ * <h2>Why Item, not BlockItem?</h2>
+ * The two click hooks we need ({@code overrideStackedOnOther} and
+ * {@code overrideOtherStackedOnMe}) are declared on {@code Item}, not on
+ * {@code BlockItem}. Mixin can only inject into the class that <em>declares</em>
+ * a method, so targeting BlockItem would resolve as "method not found." The
+ * cost of targeting Item is that our injected bytecode loads on every Item
+ * subclass and our handlers run for every {@code overrideStackedOnOther} /
+ * {@code overrideOtherStackedOnMe} invocation in the entire game. The
+ * {@code isShulkerBox(stack)} / {@code isEnderChest(stack)} early-exit at the
+ * top of each handler bails out in O(1) for non-container items, which is
+ * cheap enough that the trade-off is fine — but if you're hunting perf
+ * regressions in inventory click paths, this is one place to look.
+ *
+ * <h2>Interactions (mirroring bundle behavior):</h2>
+ * <ul>
+ * <li>Left-click shulker ON item → insert item into shulker
+ * <li>Left-click item ON shulker → insert item into shulker
+ * <li>Right-click shulker ON empty slot → extract selected item from shulker
+ * <li>Right-click empty cursor ON shulker → extract selected item from shulker
+ * </ul>
  */
 @Mixin(Item.class)
 public abstract class ShulkerBoxItemMixin {
