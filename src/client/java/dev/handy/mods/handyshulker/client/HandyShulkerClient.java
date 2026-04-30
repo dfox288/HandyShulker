@@ -1,5 +1,6 @@
 package dev.handy.mods.handyshulker.client;
 
+import dev.handy.mods.handyshulker.EnderChestHelper;
 import dev.handy.mods.handyshulker.ShulkerTooltip;
 import dev.handy.mods.handyshulker.net.HandyShulkerPayloads;
 import dev.handy.mods.handyshulker.net.SyncEnderChestPayload;
@@ -33,7 +34,7 @@ public class HandyShulkerClient implements ClientModInitializer {
 			if (player == null) return;
 			PlayerEnderChestContainer inv = player.getEnderChestInventory();
 			List<ItemStack> items = payload.items();
-			for (int i = 0; i < 27; i++) {
+			for (int i = 0; i < EnderChestHelper.ENDER_CHEST_SLOTS; i++) {
 				inv.setItem(i, i < items.size() ? items.get(i).copy() : ItemStack.EMPTY);
 			}
 		});

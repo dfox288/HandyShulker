@@ -190,6 +190,11 @@ public abstract class ShulkerBoxItemMixin {
 
 	private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);
 	private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.44F, 0.53F, 1.0F);
+	/** Vanilla item-bar fixed pixel width — see {@code Item#getBarWidth} contract. */
+	private static final int BAR_PIXEL_WIDTH = 13;
+	/** Maximum span of the filled portion. The full {@link #BAR_PIXEL_WIDTH} is reserved
+	 *  for the gutter on either side, so the fill caps at one less than the bar width. */
+	private static final int BAR_FILL_MAX = BAR_PIXEL_WIDTH - 1;
 
 	@Inject(method = "isBarVisible(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$isBarVisible(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
@@ -202,7 +207,7 @@ public abstract class ShulkerBoxItemMixin {
 	private void handyshulker$getBarWidth(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
 		if (HandyShulkerConfig.get().showFullnessBar && ShulkerBoxHelper.isShulkerBox(stack)) {
 			int occupied = ShulkerBoxHelper.getOccupiedSlots(stack);
-			cir.setReturnValue(Math.min(1 + 12 * occupied / ShulkerBoxHelper.SHULKER_SLOTS, 13));
+			cir.setReturnValue(Math.min(1 + BAR_FILL_MAX * occupied / ShulkerBoxHelper.SHULKER_SLOTS, BAR_PIXEL_WIDTH));
 		}
 	}
 

@@ -243,18 +243,26 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 		return ARGB.colorFromFloat(0.8F, r / 255.0F, g / 255.0F, b / 255.0F);
 	}
 
+	/** Period of the ender-glow color sweep in milliseconds (2.4 s full cycle). */
+	private static final long ENDER_GLOW_PERIOD_MS = 2400L;
+	/** Phase offset for the green channel — 2π/3 radians. Positions the green
+	 *  sine wave 120° behind red so the three channels form a balanced triad. */
+	private static final float PHASE_OFFSET_GREEN = (float) (2.0 * Math.PI / 3.0);
+	/** Phase offset for the blue channel — 4π/3 radians (equivalently -2π/3). */
+	private static final float PHASE_OFFSET_BLUE = (float) (4.0 * Math.PI / 3.0);
+
 	/**
 	 * Animated ender-glow border: slowly cycles through cyan → magenta → violet,
 	 * matching the ender-eye aesthetic. Keeps the tooltip border visually distinct
 	 * from dyed shulker boxes.
 	 */
 	private static int getEnderGlowColor() {
-		float phase = (System.currentTimeMillis() % 2400L) / 2400.0F; // 2.4 s full cycle
+		float phase = (System.currentTimeMillis() % ENDER_GLOW_PERIOD_MS) / (float) ENDER_GLOW_PERIOD_MS;
 		float angle = phase * (float) (Math.PI * 2.0);
 		// Desaturated ender palette — baselines close to mid-gray, small swing
 		float r = 0.32F + 0.18F * (float) Math.sin(angle);
-		float g = 0.38F + 0.16F * (float) Math.sin(angle + 2.094F);  // +120°
-		float b = 0.48F + 0.18F * (float) Math.sin(angle + 4.189F);  // +240°
+		float g = 0.38F + 0.16F * (float) Math.sin(angle + PHASE_OFFSET_GREEN);
+		float b = 0.48F + 0.18F * (float) Math.sin(angle + PHASE_OFFSET_BLUE);
 		return ARGB.colorFromFloat(0.75F,
 				Math.clamp(r, 0F, 1F),
 				Math.clamp(g, 0F, 1F),
