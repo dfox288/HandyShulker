@@ -3,7 +3,7 @@
 	"package": "dev.handy.mods.handyshulker.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"ShulkerBoxItemMixin",
+		"ItemShulkerInteractionMixin",
 		"ContainerMenuMixin",
 		"ItemStackMixin",
 		"PlayerEnderChestContainerMixin"

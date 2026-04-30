@@ -25,7 +25,7 @@ import java.util.List;
 public class ShulkerMouseActions implements ItemSlotMouseAction {
 
 	/** Slot index currently being hovered, or -1 if none. Read by external mixins
-	 *  (MouseHandlerMixin scroll guard, ShulkerBoxTooltipMixin selection lookup);
+	 *  (MouseHandlerMixin scroll guard, ItemShulkerTooltipMixin selection lookup);
 	 *  writes stay local. */
 	private static int lastHoveredSlotIndex = -1;
 

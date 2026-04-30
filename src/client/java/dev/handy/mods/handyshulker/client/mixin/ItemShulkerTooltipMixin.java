@@ -26,7 +26,7 @@ import java.util.Optional;
  * converts into our ClientShulkerTooltip renderer.
  */
 @Mixin(Item.class)
-public abstract class ShulkerBoxTooltipMixin {
+public abstract class ItemShulkerTooltipMixin {
 
 	@Inject(method = "getTooltipImage(Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$getTooltipImage(ItemStack stack, CallbackInfoReturnable<Optional<TooltipComponent>> cir) {

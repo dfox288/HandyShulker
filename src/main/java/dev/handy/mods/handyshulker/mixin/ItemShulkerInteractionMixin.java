@@ -43,7 +43,7 @@ import java.util.List;
  * </ul>
  */
 @Mixin(Item.class)
-public abstract class ShulkerBoxItemMixin {
+public abstract class ItemShulkerInteractionMixin {
 
 	/**
 	 * Called when this item is clicked on another item in inventory.

@@ -3,7 +3,7 @@
 	"package": "dev.handy.mods.handyshulker.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"ShulkerBoxTooltipMixin",
+		"ItemShulkerTooltipMixin",
 		"ContainerScreenMixin",
 		"MouseHandlerMixin"
 	],
