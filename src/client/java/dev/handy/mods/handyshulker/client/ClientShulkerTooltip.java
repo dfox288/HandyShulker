@@ -259,9 +259,9 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 		float g = 0.38F + 0.16F * (float) Math.sin(angle + 2.094F);  // +120°
 		float b = 0.48F + 0.18F * (float) Math.sin(angle + 4.189F);  // +240°
 		return ARGB.colorFromFloat(0.75F,
-				Math.max(0F, Math.min(1F, r)),
-				Math.max(0F, Math.min(1F, g)),
-				Math.max(0F, Math.min(1F, b)));
+				Math.clamp(r, 0F, 1F),
+				Math.clamp(g, 0F, 1F),
+				Math.clamp(b, 0F, 1F));
 	}
 
 	private void drawSelectedItemName(Font font, GuiGraphicsExtractor guiGraphics, int x, int y, int width) {
