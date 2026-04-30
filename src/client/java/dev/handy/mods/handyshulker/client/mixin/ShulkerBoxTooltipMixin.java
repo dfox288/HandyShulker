@@ -49,7 +49,7 @@ public abstract class ShulkerBoxTooltipMixin {
 
 		// Read the current selection from the container menu
 		int selectedIndex = -1;
-		int hoveredSlot = ShulkerMouseActions.lastHoveredSlotIndex;
+		int hoveredSlot = ShulkerMouseActions.currentHoveredSlot();
 		if (hoveredSlot >= 0 && mc.player != null && mc.player.containerMenu != null) {
 			ShulkerSelectionManager manager = (ShulkerSelectionManager) mc.player.containerMenu;
 			selectedIndex = manager.handyshulker$getSelection(hoveredSlot);
