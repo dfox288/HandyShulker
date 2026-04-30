@@ -83,8 +83,16 @@ public final class EnderChestHelper {
 		};
 	}
 
-	/** Disallow nested ender chests (vanilla rule). Shulker boxes are permitted. */
+	/**
+	 * Ender chests have no insert restrictions. Shulker boxes get the
+	 * "no nesting" rule because each shulker carries its own contents on the
+	 * item, so a shulker-in-shulker would be a recursive container. Ender
+	 * chest items don't carry contents — they all share the player's
+	 * single ender storage when placed — so dropping ender chest items
+	 * into the ender chest inventory is just storing items in a 27-slot
+	 * box, no recursion.
+	 */
 	public static boolean canInsert(ItemStack stack) {
-		return !isEnderChest(stack);
+		return true;
 	}
 }
