@@ -2,6 +2,8 @@ package dev.handy.mods.handyshulker.mixin;
 
 import dev.handy.mods.handyshulker.HandyContainers;
 import dev.handy.mods.handyshulker.ShulkerSelectionManager;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.Slot;
@@ -13,9 +15,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Injects ShulkerSelectionManager interface into AbstractContainerMenu.
@@ -32,11 +31,18 @@ public abstract class ContainerMenuMixin implements ShulkerSelectionManager {
 	public NonNullList<Slot> slots;
 
 	@Unique
-	private final Map<Integer, Integer> handyshulker$selections = new HashMap<>();
+	private final Int2IntMap handyshulker$selections = handyshulker$newSelectionMap();
+
+	@Unique
+	private static Int2IntMap handyshulker$newSelectionMap() {
+		Int2IntOpenHashMap m = new Int2IntOpenHashMap();
+		m.defaultReturnValue(-1);
+		return m;
+	}
 
 	@Override
 	public int handyshulker$getSelection(int slotIndex) {
-		return handyshulker$selections.getOrDefault(slotIndex, -1);
+		return handyshulker$selections.get(slotIndex);
 	}
 
 	@Override
