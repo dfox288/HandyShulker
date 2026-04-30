@@ -75,42 +75,8 @@ public final class ShulkerBoxHelper {
 	 * @return The number of items actually inserted
 	 */
 	public static int tryInsert(ItemStack shulkerStack, ItemStack toInsert) {
-		if (toInsert.isEmpty() || !canInsert(toInsert)) {
-			return 0;
-		}
-
-		List<ItemStack> contents = getContents(shulkerStack);
-		int inserted = 0;
-
-		// Merge into matching stacks at their existing positions.
-		for (int i = 0; i < contents.size() && inserted < toInsert.getCount(); i++) {
-			ItemStack existing = contents.get(i);
-			if (existing.isEmpty()) continue;
-			if (ItemStack.isSameItemSameComponents(existing, toInsert)) {
-				int space = existing.getMaxStackSize() - existing.getCount();
-				if (space > 0) {
-					int toAdd = Math.min(space, toInsert.getCount() - inserted);
-					existing.grow(toAdd);
-					inserted += toAdd;
-				}
-			}
-		}
-
-		// Fill empty slots by index — never append past SHULKER_SLOTS.
-		for (int i = 0; i < contents.size() && inserted < toInsert.getCount(); i++) {
-			if (contents.get(i).isEmpty()) {
-				int toAdd = Math.min(toInsert.getMaxStackSize(), toInsert.getCount() - inserted);
-				contents.set(i, toInsert.copyWithCount(toAdd));
-				inserted += toAdd;
-			}
-		}
-
-		if (inserted > 0) {
-			setContents(shulkerStack, contents);
-			toInsert.shrink(inserted);
-		}
-
-		return inserted;
+		if (!canInsert(toInsert)) return 0;
+		return SlotOps.tryInsert(forStack(shulkerStack), toInsert);
 	}
 
 	/**
@@ -118,18 +84,23 @@ public final class ShulkerBoxHelper {
 	 * Returns ItemStack.EMPTY if no item at that index.
 	 */
 	public static ItemStack removeOneStack(ItemStack shulkerStack, int index) {
-		List<ItemStack> contents = getContents(shulkerStack);
-		if (index < 0 || index >= contents.size()) {
-			return ItemStack.EMPTY;
-		}
+		return SlotOps.removeOne(forStack(shulkerStack), index);
+	}
 
-		ItemStack removed = contents.get(index);
-		if (removed.isEmpty()) {
-			return ItemStack.EMPTY;
-		}
-		contents.set(index, ItemStack.EMPTY);
-		setContents(shulkerStack, contents);
-		return removed;
+	/**
+	 * Build a {@link SlotAccessor} backed by this shulker's CONTAINER component.
+	 * The contents list is a fresh snapshot — in-place mutations on its stacks
+	 * are local, and {@link SlotAccessor#commit} writes the snapshot back via
+	 * {@link #setContents}.
+	 */
+	private static SlotAccessor forStack(ItemStack shulkerStack) {
+		List<ItemStack> contents = getContents(shulkerStack);
+		return new SlotAccessor() {
+			@Override public int size() { return contents.size(); }
+			@Override public ItemStack get(int i) { return contents.get(i); }
+			@Override public void set(int i, ItemStack stack) { contents.set(i, stack); }
+			@Override public void commit() { setContents(shulkerStack, contents); }
+		};
 	}
 
 	/**

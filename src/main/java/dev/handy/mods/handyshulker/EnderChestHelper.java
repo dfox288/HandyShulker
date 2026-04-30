@@ -56,51 +56,31 @@ public final class EnderChestHelper {
 	 * shrinking its count by however many were accepted. Returns inserted count.
 	 */
 	public static int tryInsert(Player player, ItemStack toInsert) {
-		if (toInsert.isEmpty() || !canInsert(toInsert)) return 0;
-		PlayerEnderChestContainer inv = player.getEnderChestInventory();
-		int inserted = 0;
-
-		// Merge into matching non-empty slots.
-		for (int i = 0; i < ENDER_CHEST_SLOTS && inserted < toInsert.getCount(); i++) {
-			ItemStack existing = inv.getItem(i);
-			if (existing.isEmpty()) continue;
-			if (ItemStack.isSameItemSameComponents(existing, toInsert)) {
-				int space = existing.getMaxStackSize() - existing.getCount();
-				if (space > 0) {
-					int toAdd = Math.min(space, toInsert.getCount() - inserted);
-					existing.grow(toAdd);
-					inserted += toAdd;
-				}
-			}
-		}
-
-		// Fill empty slots by index.
-		for (int i = 0; i < ENDER_CHEST_SLOTS && inserted < toInsert.getCount(); i++) {
-			if (inv.getItem(i).isEmpty()) {
-				int toAdd = Math.min(toInsert.getMaxStackSize(), toInsert.getCount() - inserted);
-				inv.setItem(i, toInsert.copyWithCount(toAdd));
-				inserted += toAdd;
-			}
-		}
-
-		if (inserted > 0) {
-			inv.setChanged();
-			toInsert.shrink(inserted);
-		}
-		return inserted;
+		if (!canInsert(toInsert)) return 0;
+		return SlotOps.tryInsert(forPlayer(player), toInsert);
 	}
 
 	/**
 	 * Remove and return the stack at {@code index} (replaces with EMPTY).
 	 */
 	public static ItemStack removeOneStack(Player player, int index) {
-		if (index < 0 || index >= ENDER_CHEST_SLOTS) return ItemStack.EMPTY;
+		return SlotOps.removeOne(forPlayer(player), index);
+	}
+
+	/**
+	 * Build a {@link SlotAccessor} backed by the player's ender chest inventory.
+	 * Stacks returned by {@code get} are the live container stacks, so in-place
+	 * grows during the merge phase are persisted directly; {@code commit} just
+	 * marks the container dirty.
+	 */
+	private static SlotAccessor forPlayer(Player player) {
 		PlayerEnderChestContainer inv = player.getEnderChestInventory();
-		ItemStack removed = inv.getItem(index);
-		if (removed.isEmpty()) return ItemStack.EMPTY;
-		inv.setItem(index, ItemStack.EMPTY);
-		inv.setChanged();
-		return removed;
+		return new SlotAccessor() {
+			@Override public int size() { return ENDER_CHEST_SLOTS; }
+			@Override public ItemStack get(int i) { return inv.getItem(i); }
+			@Override public void set(int i, ItemStack stack) { inv.setItem(i, stack); }
+			@Override public void commit() { inv.setChanged(); }
+		};
 	}
 
 	/** Disallow nested ender chests (vanilla rule). Shulker boxes are permitted. */
