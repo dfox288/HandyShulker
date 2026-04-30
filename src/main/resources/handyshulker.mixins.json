@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "dev.handy.mods.handyshulker.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ShulkerBoxItemMixin",
+		"ContainerMenuMixin",
+		"ItemStackMixin",
+		"PlayerEnderChestContainerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

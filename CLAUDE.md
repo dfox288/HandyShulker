@@ -1,4 +1,4 @@
-# Handy Shulkers - Fabric Mod
+# Handy Shulker - Fabric Mod
 
 ## Project Overview
 
@@ -28,28 +28,28 @@ Key naming conventions:
 ## Project Structure
 
 ```
-handyshulkers/
+HandyShulker/
 ├── build.gradle              # Gradle build config with Fabric Loom
 ├── gradle.properties         # Version configuration (MC, Fabric, Loom versions)
 ├── settings.gradle           # Plugin repositories
 ├── CLAUDE.md                 # This file
 ├── src/
 │   ├── main/                 # Shared code (runs on BOTH client and server)
-│   │   ├── java/dev/handyshulkers/
-│   │   │   ├── HandyShulkers.java        # Main mod entrypoint
+│   │   ├── java/dev/handy/mods/handyshulker/
+│   │   │   ├── HandyShulker.java        # Main mod entrypoint
 │   │   │   ├── ShulkerBoxHelper.java     # Utility: read/write shulker contents
 │   │   │   └── mixin/
 │   │   │       └── ShulkerBoxItemMixin.java  # Click-to-insert behavior
 │   │   └── resources/
 │   │       ├── fabric.mod.json           # Mod descriptor
-│   │       └── handyshulkers.mixins.json # Mixin config (shared)
+│   │       └── handyshulker.mixins.json # Mixin config (shared)
 │   └── client/               # Client-only code (rendering, tooltips, input)
-│       ├── java/dev/handyshulkers/client/
-│       │   ├── HandyShulkersClient.java  # Client entrypoint
+│       ├── java/dev/handy/mods/handyshulker/client/
+│       │   ├── HandyShulkerClient.java  # Client entrypoint
 │       │   └── mixin/
 │       │       └── ShulkerBoxTooltipMixin.java  # Tooltip + scroll behavior
 │       └── resources/
-│           └── handyshulkers.client.mixins.json  # Client mixin config
+│           └── handyshulker.client.mixins.json  # Client mixin config
 ```
 
 **Split source sets**: The project uses `splitEnvironmentSourceSets()` in build.gradle. This means:
@@ -88,7 +88,7 @@ Key concepts:
 - `CallbackInfoReturnable<T>` - allows cancelling the original method and returning a custom value
 - `cir.setReturnValue(value)` + `cir.cancel()` or just `cir.setReturnValue()` which implies cancel
 
-Mixin method names should be prefixed with `handyshulkers$` to avoid conflicts with other mods.
+Mixin method names should be prefixed with `handyshulker$` to avoid conflicts with other mods.
 
 ## Key Minecraft Classes to Reference
 
@@ -173,10 +173,10 @@ Study how `BundleItem` handles `onScrollInSlot()` (if this method exists in 1.21
 
 ## Code Style
 
-- Use `handyshulkers$` prefix for all mixin method names
+- Use `handyshulker$` prefix for all mixin method names
 - Keep logic in `ShulkerBoxHelper` for reusability
 - Comment complex Minecraft interactions — the codebase has unique patterns
-- Use SLF4J logger from `HandyShulkers.LOGGER` for debug output
+- Use SLF4J logger from `HandyShulker.LOGGER` for debug output
 
 
 <claude-mem-context>

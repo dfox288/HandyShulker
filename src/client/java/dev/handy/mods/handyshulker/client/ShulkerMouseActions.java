@@ -1,0 +1,142 @@
+package dev.handy.mods.handyshulker.client;
+
+import dev.handy.mods.handyshulker.HandyContainers;
+import dev.handy.mods.handyshulker.ShulkerBoxHelper;
+import dev.handy.mods.handyshulker.ShulkerSelectionManager;
+import dev.handy.mods.handyshulker.config.HandyShulkerConfig;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.ScrollWheelHandler;
+import net.minecraft.client.gui.ItemSlotMouseAction;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ServerboundSelectBundleItemPacket;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import org.joml.Vector2i;
+
+import java.util.List;
+
+/**
+ * Handles mouse scroll events over shulker box slots in the inventory.
+ * Scrolling cycles through the shulker's items, selecting one for extraction.
+ *
+ * Reuses the ServerboundSelectBundleItemPacket to sync the selection with the server.
+ */
+@Environment(EnvType.CLIENT)
+public class ShulkerMouseActions implements ItemSlotMouseAction {
+
+	/** Tracks the slot index currently being hovered (for tooltip rendering) */
+	public static int lastHoveredSlotIndex = -1;
+
+	/** Active instance for use by the AllowMouseScroll event callback */
+	private static ShulkerMouseActions activeInstance;
+
+	private final Minecraft minecraft;
+	private final ScrollWheelHandler scrollWheelHandler;
+
+	public ShulkerMouseActions(Minecraft minecraft) {
+		this.minecraft = minecraft;
+		this.scrollWheelHandler = new ScrollWheelHandler();
+		activeInstance = this;
+	}
+
+	/**
+	 * Called from the Fabric AllowMouseScroll event to handle shulker scrolling
+	 * before Mouse Tweaks (or other mods) can intercept it.
+	 * Returns true if the scroll was consumed (caller should block the event).
+	 */
+	public static boolean handleScrollEvent(double scrollX, double scrollY) {
+		if (activeInstance == null || lastHoveredSlotIndex < 0) return false;
+
+		Minecraft mc = activeInstance.minecraft;
+		if (mc.player == null || mc.player.containerMenu == null) return false;
+
+		int slotIndex = lastHoveredSlotIndex;
+		if (slotIndex >= mc.player.containerMenu.slots.size()) return false;
+
+		Slot slot = mc.player.containerMenu.slots.get(slotIndex);
+		ItemStack stack = slot.getItem();
+		if (!HandyContainers.isActionAllowed(stack, mc.player)) return false;
+
+		return activeInstance.onMouseScrolled(scrollX, scrollY, slotIndex, stack);
+	}
+
+	@Override
+	public boolean matches(Slot slot) {
+		if (!HandyShulkerConfig.get().enableScrollExtract) return false;
+		boolean allowed = HandyContainers.isActionAllowed(slot.getItem(), this.minecraft.player);
+		if (allowed) {
+			lastHoveredSlotIndex = slot.index;
+		}
+		return allowed;
+	}
+
+	@Override
+	public boolean onMouseScrolled(double scrollX, double scrollY, int slotIndex, ItemStack itemStack) {
+		// In compact mode, consume scroll but don't change selection
+		if (ShulkerClientUtil.isCompactMode()) {
+			return true;
+		}
+
+		List<ItemStack> contents = HandyContainers.getContents(itemStack, this.minecraft.player);
+		// Only count non-empty items for scrolling
+		int itemCount = (int) contents.stream().filter(s -> !s.isEmpty()).count();
+		if (itemCount == 0) {
+			return false;
+		}
+
+		Vector2i scroll = this.scrollWheelHandler.onMouseScroll(scrollX, scrollY);
+		int delta = scroll.y == 0 ? -scroll.x : scroll.y;
+		if (delta != 0) {
+			ShulkerSelectionManager selectionManager = (ShulkerSelectionManager) this.minecraft.player.containerMenu;
+			int currentSelection = selectionManager.handyshulker$getSelection(slotIndex);
+			int newSelection = ScrollWheelHandler.getNextScrollWheelSelection(delta, currentSelection, itemCount);
+
+			if (currentSelection != newSelection) {
+				setSelection(itemStack, slotIndex, newSelection);
+				// Soft tick on scroll selection change
+				HandyShulkerConfig config = HandyShulkerConfig.get();
+				if (config.enableSounds) {
+					this.minecraft.player.playSound(
+							net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME,
+							0.15F * config.soundVolume,
+							1.6F + this.minecraft.player.level().getRandom().nextFloat() * 0.3F
+					);
+				}
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public void onStopHovering(Slot slot) {
+		lastHoveredSlotIndex = -1;
+		clearSelection(slot.getItem(), slot.index);
+	}
+
+	@Override
+	public void onSlotClicked(Slot slot, ContainerInput clickType) {
+		if (clickType == ContainerInput.QUICK_MOVE || clickType == ContainerInput.SWAP) {
+			clearSelection(slot.getItem(), slot.index);
+		}
+	}
+
+	private void setSelection(ItemStack itemStack, int slotIndex, int selectedIndex) {
+		ClientPacketListener connection = this.minecraft.getConnection();
+		if (connection == null) return;
+
+		// Update client-side selection
+		ShulkerSelectionManager selectionManager = (ShulkerSelectionManager) this.minecraft.player.containerMenu;
+		selectionManager.handyshulker$setSelection(slotIndex, selectedIndex);
+
+		// Sync to server by reusing the bundle selection packet
+		connection.send(new ServerboundSelectBundleItemPacket(slotIndex, selectedIndex));
+	}
+
+	private void clearSelection(ItemStack itemStack, int slotIndex) {
+		setSelection(itemStack, slotIndex, -1);
+	}
+}

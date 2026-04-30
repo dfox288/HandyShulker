@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "handyshulkers",
+	"id": "handyshulker",
 	"version": "${version}",
 	"name": "Handy Shulker",
 	"description": "Shulker boxes should work like bundles. Click to insert items, hover to preview contents, and scroll to extract - all without placing the box down.",
@@ -13,23 +13,23 @@
 		"issues": "https://github.com/dfox288/HandyShulker/issues"
 	},
 	"license": "MIT",
-	"icon": "assets/handyshulkers/icon.png",
+	"icon": "assets/handyshulker/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"dev.handyshulkers.HandyShulkers"
+			"dev.handy.mods.handyshulker.HandyShulker"
 		],
 		"client": [
-			"dev.handyshulkers.client.HandyShulkersClient"
+			"dev.handy.mods.handyshulker.client.HandyShulkerClient"
 		],
 		"modmenu": [
-			"dev.handyshulkers.client.config.ModMenuIntegration"
+			"dev.handy.mods.handyshulker.client.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
-		"handyshulkers.mixins.json",
+		"handyshulker.mixins.json",
 		{
-			"config": "handyshulkers.client.mixins.json",
+			"config": "handyshulker.client.mixins.json",
 			"environment": "client"
 		}
 	],

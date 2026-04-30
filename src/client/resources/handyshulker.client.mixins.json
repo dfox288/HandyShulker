@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "dev.handy.mods.handyshulker.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ShulkerBoxTooltipMixin",
+		"ContainerScreenMixin",
+		"MouseHandlerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
