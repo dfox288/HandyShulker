@@ -128,10 +128,15 @@ public abstract class ShulkerBoxItemMixin {
 	 * We convert it to the actual contents list index.
 	 */
 	private static int handyshulker$getExtractIndex(Player player, int slotIndex, ItemStack containerStack) {
-		ShulkerSelectionManager manager = (ShulkerSelectionManager) player.containerMenu;
-		int selectedNonEmptyIndex = manager.handyshulker$getSelection(slotIndex);
-
 		List<ItemStack> contents = HandyContainers.getContents(containerStack, player);
+		// If the player's container menu wasn't constructed through ContainerMenuMixin
+		// (rare classloader edge case where another mod's AbstractContainerMenu subclass
+		// loads before our mixin applies), there's no scroll-selection state to read —
+		// fall back to the first non-empty slot, which matches the "no selection yet" path.
+		if (!(player.containerMenu instanceof ShulkerSelectionManager manager)) {
+			return handyshulker$firstNonEmptyIndex(contents);
+		}
+		int selectedNonEmptyIndex = manager.handyshulker$getSelection(slotIndex);
 		if (selectedNonEmptyIndex < 0) {
 			return handyshulker$firstNonEmptyIndex(contents);
 		}
