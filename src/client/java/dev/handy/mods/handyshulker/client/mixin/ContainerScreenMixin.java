@@ -20,7 +20,7 @@ public abstract class ContainerScreenMixin {
 	@Shadow
 	protected abstract void addItemSlotMouseAction(ItemSlotMouseAction action);
 
-	@Inject(method = "init", at = @At("TAIL"))
+	@Inject(method = "init()V", at = @At("TAIL"))
 	private void handyshulker$onInit(CallbackInfo ci) {
 		addItemSlotMouseAction(new ShulkerMouseActions(Minecraft.getInstance()));
 	}

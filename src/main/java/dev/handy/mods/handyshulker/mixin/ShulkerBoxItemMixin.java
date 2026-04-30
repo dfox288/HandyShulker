@@ -38,7 +38,7 @@ public abstract class ShulkerBoxItemMixin {
 	 * - LEFT-click on an item → insert that item into the shulker
 	 * - RIGHT-click on an empty slot → extract the selected (or first) item
 	 */
-	@Inject(method = "overrideStackedOnOther", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "overrideStackedOnOther(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/world/inventory/ClickAction;Lnet/minecraft/world/entity/player/Player;)Z", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$onStackedOnOther(
 			ItemStack containerStack, Slot slot, ClickAction action, Player player,
 			CallbackInfoReturnable<Boolean> cir) {
@@ -84,7 +84,7 @@ public abstract class ShulkerBoxItemMixin {
 	 * - LEFT-click with an item → insert that item into the shulker
 	 * - RIGHT-click with empty hand → extract the selected (or first) item
 	 */
-	@Inject(method = "overrideOtherStackedOnMe", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "overrideOtherStackedOnMe(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/world/inventory/ClickAction;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/SlotAccess;)Z", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$onOtherStackedOnMe(
 			ItemStack containerStack, ItemStack incomingStack, Slot slot, ClickAction action,
 			Player player, SlotAccess slotAccess,
@@ -178,14 +178,14 @@ public abstract class ShulkerBoxItemMixin {
 	private static final int FULL_BAR_COLOR = ARGB.colorFromFloat(1.0F, 1.0F, 0.33F, 0.33F);
 	private static final int BAR_COLOR = ARGB.colorFromFloat(1.0F, 0.44F, 0.53F, 1.0F);
 
-	@Inject(method = "isBarVisible", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "isBarVisible(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$isBarVisible(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
 		if (HandyShulkerConfig.get().showFullnessBar && ShulkerBoxHelper.isShulkerBox(stack)) {
 			cir.setReturnValue(ShulkerBoxHelper.getOccupiedSlots(stack) > 0);
 		}
 	}
 
-	@Inject(method = "getBarWidth", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "getBarWidth(Lnet/minecraft/world/item/ItemStack;)I", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$getBarWidth(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
 		if (HandyShulkerConfig.get().showFullnessBar && ShulkerBoxHelper.isShulkerBox(stack)) {
 			int occupied = ShulkerBoxHelper.getOccupiedSlots(stack);
@@ -193,7 +193,7 @@ public abstract class ShulkerBoxItemMixin {
 		}
 	}
 
-	@Inject(method = "getBarColor", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "getBarColor(Lnet/minecraft/world/item/ItemStack;)I", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$getBarColor(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
 		if (HandyShulkerConfig.get().showFullnessBar && ShulkerBoxHelper.isShulkerBox(stack)) {
 			int occupied = ShulkerBoxHelper.getOccupiedSlots(stack);

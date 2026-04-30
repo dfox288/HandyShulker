@@ -57,7 +57,7 @@ public abstract class ContainerMenuMixin implements ShulkerSelectionManager {
 	 * Intercept the bundle selection packet handler. When the slot contains a
 	 * shulker box instead of a bundle, store the selection in our map.
 	 */
-	@Inject(method = "setSelectedBundleItemIndex", at = @At("HEAD"))
+	@Inject(method = "setSelectedBundleItemIndex(II)V", at = @At("HEAD"))
 	private void handyshulker$onSetSelectedBundleItemIndex(int slotId, int selectedItemIndex, CallbackInfo ci) {
 		if (slotId >= 0 && slotId < slots.size()) {
 			ItemStack stack = slots.get(slotId).getItem();

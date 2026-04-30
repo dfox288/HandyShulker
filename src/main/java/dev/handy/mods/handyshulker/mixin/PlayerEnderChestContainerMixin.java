@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEnderChestContainer.class)
 public abstract class PlayerEnderChestContainerMixin {
 
-	@Inject(method = "stopOpen", at = @At("TAIL"))
+	@Inject(method = "stopOpen(Lnet/minecraft/world/entity/ContainerUser;)V", at = @At("TAIL"))
 	private void handyshulker$syncOnClose(ContainerUser user, CallbackInfo ci) {
 		if (user.getLivingEntity() instanceof ServerPlayer player) {
 			HandyShulker.syncEnderChest(player);

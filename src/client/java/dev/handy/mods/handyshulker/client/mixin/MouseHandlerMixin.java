@@ -23,7 +23,7 @@ public class MouseHandlerMixin {
 	@Final
 	private Minecraft minecraft;
 
-	@Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "onScroll(JDD)V", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$onScroll(long window, double scrollX, double scrollY, CallbackInfo ci) {
 		if (!(this.minecraft.gui.screen() instanceof AbstractContainerScreen<?>)
 				|| ShulkerMouseActions.lastHoveredSlotIndex < 0) {

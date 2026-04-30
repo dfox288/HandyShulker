@@ -28,7 +28,7 @@ import java.util.Optional;
 @Mixin(Item.class)
 public abstract class ShulkerBoxTooltipMixin {
 
-	@Inject(method = "getTooltipImage", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "getTooltipImage(Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;", at = @At("HEAD"), cancellable = true)
 	private void handyshulker$getTooltipImage(ItemStack stack, CallbackInfoReturnable<Optional<TooltipComponent>> cir) {
 		if (!HandyContainers.isSupported(stack)) {
 			return;
