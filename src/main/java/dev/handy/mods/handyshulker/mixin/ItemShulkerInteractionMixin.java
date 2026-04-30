@@ -65,15 +65,7 @@ public abstract class ItemShulkerInteractionMixin {
 
 		if (action == ClickAction.PRIMARY && !targetStack.isEmpty()) {
 			if (!config.enableClickInsert) return;
-			if (HandyContainers.canInsert(containerStack, targetStack)) {
-				int inserted = HandyContainers.tryInsert(containerStack, player, targetStack);
-				if (inserted > 0) {
-					playInsertSound(player);
-				} else {
-					playInsertFailSound(player);
-				}
-				cir.setReturnValue(true);
-			}
+			handyshulker$tryInsertOther(containerStack, targetStack, player, cir);
 		} else if (action == ClickAction.SECONDARY && targetStack.isEmpty()) {
 			if (!config.enableScrollExtract) return;
 			int extractIndex = handyshulker$getExtractIndex(player, slot.index, containerStack);
@@ -111,15 +103,7 @@ public abstract class ItemShulkerInteractionMixin {
 
 		if (action == ClickAction.PRIMARY && !incomingStack.isEmpty()) {
 			if (!config.enableClickInsert) return;
-			if (HandyContainers.canInsert(containerStack, incomingStack)) {
-				int inserted = HandyContainers.tryInsert(containerStack, player, incomingStack);
-				if (inserted > 0) {
-					playInsertSound(player);
-				} else {
-					playInsertFailSound(player);
-				}
-				cir.setReturnValue(true);
-			}
+			handyshulker$tryInsertOther(containerStack, incomingStack, player, cir);
 		} else if (action == ClickAction.SECONDARY && incomingStack.isEmpty()) {
 			if (!config.enableScrollExtract) return;
 			if (slot.allowModification(player)) {
@@ -133,6 +117,31 @@ public abstract class ItemShulkerInteractionMixin {
 			}
 			cir.setReturnValue(true);
 		}
+	}
+
+	/**
+	 * Shared PRIMARY-click insert flow used by both handlers. The cursor stack comes
+	 * from different places — slot.getItem() in onStackedOnOther, the method arg
+	 * in onOtherStackedOnMe — but once we have it, the rest of the flow (canInsert
+	 * gate, tryInsert, success/fail sound, cancel-and-return-true) is identical.
+	 *
+	 * The SECONDARY-click extract flow is intentionally NOT shared — the two
+	 * handlers place the extracted stack via different mechanisms (slot.safeInsert
+	 * with remainder fallback into the shulker vs slotAccess.set behind an
+	 * allowModification gate), and the sound timing relative to the placement
+	 * also differs.
+	 */
+	private static void handyshulker$tryInsertOther(
+			ItemStack containerStack, ItemStack toInsert, Player player,
+			CallbackInfoReturnable<Boolean> cir) {
+		if (!HandyContainers.canInsert(containerStack, toInsert)) return;
+		int inserted = HandyContainers.tryInsert(containerStack, player, toInsert);
+		if (inserted > 0) {
+			playInsertSound(player);
+		} else {
+			playInsertFailSound(player);
+		}
+		cir.setReturnValue(true);
 	}
 
 	/**
