@@ -95,7 +95,7 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 			int newSelection = ScrollWheelHandler.getNextScrollWheelSelection(delta, currentSelection, itemCount);
 
 			if (currentSelection != newSelection) {
-				setSelection(itemStack, slotIndex, newSelection);
+				setSelection(slotIndex, newSelection);
 				// Soft tick on scroll selection change
 				HandyShulkerConfig config = HandyShulkerConfig.get();
 				if (config.enableSounds) {
@@ -114,17 +114,17 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 	@Override
 	public void onStopHovering(Slot slot) {
 		lastHoveredSlotIndex = -1;
-		clearSelection(slot.getItem(), slot.index);
+		clearSelection(slot.index);
 	}
 
 	@Override
 	public void onSlotClicked(Slot slot, ContainerInput clickType) {
 		if (clickType == ContainerInput.QUICK_MOVE || clickType == ContainerInput.SWAP) {
-			clearSelection(slot.getItem(), slot.index);
+			clearSelection(slot.index);
 		}
 	}
 
-	private void setSelection(ItemStack itemStack, int slotIndex, int selectedIndex) {
+	private void setSelection(int slotIndex, int selectedIndex) {
 		ClientPacketListener connection = this.minecraft.getConnection();
 		if (connection == null) return;
 
@@ -136,7 +136,7 @@ public class ShulkerMouseActions implements ItemSlotMouseAction {
 		connection.send(new ServerboundSelectBundleItemPacket(slotIndex, selectedIndex));
 	}
 
-	private void clearSelection(ItemStack itemStack, int slotIndex) {
-		setSelection(itemStack, slotIndex, -1);
+	private void clearSelection(int slotIndex) {
+		setSelection(slotIndex, -1);
 	}
 }
