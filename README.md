@@ -2,7 +2,7 @@
 
 ![Handy Shulker](handy-shulker-gallery.png)
 
-A Fabric mod for Minecraft 26.1.x that makes shulker boxes work like bundles.
+A Fabric mod that makes shulker boxes work like bundles. Stable builds target Minecraft 26.1.x; the **beta channel** tracks the 26.2 prerelease cycle (currently 26.2-pre-1).
 
 Click to insert items, hover to preview contents, and scroll to extract — all without placing the box down.
 
@@ -28,7 +28,7 @@ Click to insert items, hover to preview contents, and scroll to extract — all 
 - [ModMenu](https://modrinth.com/mod/modmenu) — adds a Configure button in the mod list
 - [YACL](https://modrinth.com/mod/yacl) — powers the in-game config screen
 
-Without these, all features work with sensible defaults. You can also edit `config/handyshulkers.json` manually.
+Without these, all features work with sensible defaults. You can also edit `config/handyshulker.json` manually.
 
 ## Installation
 
