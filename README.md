@@ -19,7 +19,7 @@ Click to insert items, hover to preview contents, and scroll to extract — all 
 
 ## Requirements
 
-- Minecraft Java Edition 26.1.x
+- Minecraft Java Edition 26.1.x (stable) or 26.2 prerelease (beta channel)
 - [Fabric Loader](https://fabricmc.net/use/installer/) 0.19.2+
 - [Fabric API](https://modrinth.com/mod/fabric-api) matching your Minecraft version
 
@@ -34,7 +34,7 @@ Without these, all features work with sensible defaults. You can also edit `conf
 
 ### Single Player
 
-1. Install Fabric Loader for Minecraft 26.1.x
+1. Install Fabric Loader for Minecraft 26.1.x (or 26.2 prerelease, if you're using the beta build)
 2. Download Fabric API and place it in your `mods/` folder
 3. Download Handy Shulker and place it in your `mods/` folder
 4. Launch the game!
