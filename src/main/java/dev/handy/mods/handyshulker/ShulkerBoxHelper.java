@@ -49,7 +49,7 @@ public final class ShulkerBoxHelper {
 		List<ItemStack> items = new ArrayList<>(SHULKER_SLOTS);
 		ItemContainerContents contents = shulkerStack.get(DataComponents.CONTAINER);
 		if (contents != null) {
-			contents.allItemsCopyStream().forEach(items::add);
+			contents.itemCopies().forEach(items::add);
 		}
 		while (items.size() < SHULKER_SLOTS) {
 			items.add(ItemStack.EMPTY);
