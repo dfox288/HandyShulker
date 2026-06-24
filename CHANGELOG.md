@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.0-beta.1
+
+Preview build for the **Minecraft 26.3** snapshot cycle (tested against 26.3-snapshot-1).
+
+- Rebuilt against Fabric API **0.153.1+26.3** and YACL **3.9.5+26.3-fabric**.
+- Updated for 26.3's reworked shulker-contents storage, so click-to-insert and scroll-to-extract keep slot positions intact.
+- ModMenu has no 26.3 build yet, so it won't list the mod on 26.3 until it updates — the config screen is still reachable through YACL.
+
 ## 2.2.0
 
 Updated for the **Minecraft 26.2** full release.
