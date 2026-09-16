@@ -1,13 +1,13 @@
 # Changelog
 
-## 2.3.0-beta.2
+## 2.4.0
 
-Tracks the **Minecraft 26.3** snapshot line forward to 26.3-snapshot-7.
+Stable release for **Minecraft 26.3**.
 
-- Rebuilt against Fabric API **0.156.3+26.3** and YACL **3.9.6+26.3-fabric**.
+- Built against Minecraft **26.3**, Fabric Loader **0.19.5**, Fabric API **0.160.6+26.3** and YACL **3.9.6+26.3-fabric**.
 - **Compact-mode modifier keys work again.** 26.3 replaced Minecraft's GLFW input layer with SDL, which changed how held keys are read — Shift/Ctrl/Alt detection for the compact tooltip has been rebuilt on the new input layer.
 - Shulker tooltip line spacing follows vanilla's updated tooltip layout, so it still matches the surrounding item tooltips.
-- **The settings screen needs ModMenu installed** — that is how it is opened. ModMenu's first 26.3 build (`21.0.0-alpha.1`) is on Modrinth but has not reached the TerraformersMC maven yet, so grab it there if you want the settings UI. Without it the mod still runs fine on its saved settings, you just cannot change them in-game.
+- **The settings screen is opened through ModMenu** (`21.0.0-beta.1` or newer for 26.3), with YACL installed. Without them the mod runs fine on its saved settings; you just cannot change them in-game.
 
 ## 2.3.0-beta.1
 
