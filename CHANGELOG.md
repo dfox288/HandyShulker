@@ -2,12 +2,12 @@
 
 ## 2.4.0
 
-Stable release for **Minecraft 26.3**.
+Updated for the **Minecraft 26.3** release.
 
-- Built against Minecraft **26.3**, Fabric Loader **0.19.5**, Fabric API **0.160.6+26.3** and YACL **3.9.6+26.3-fabric**.
-- **Compact-mode modifier keys work again.** 26.3 replaced Minecraft's GLFW input layer with SDL, which changed how held keys are read — Shift/Ctrl/Alt detection for the compact tooltip has been rebuilt on the new input layer.
-- Shulker tooltip line spacing follows vanilla's updated tooltip layout, so it still matches the surrounding item tooltips.
-- **The settings screen is opened through ModMenu** (`21.0.0-beta.1` or newer for 26.3), with YACL installed. Without them the mod runs fine on its saved settings; you just cannot change them in-game.
+- Requires Fabric API for 26.3.
+- The Shift, Ctrl and Alt shortcuts for the compact shulker preview are updated for 26.3's new keyboard handling.
+- The shulker preview tooltip still matches the look of the game's other tooltips.
+- To change settings in-game, install **ModMenu** and **YACL** (both have 26.3 versions). Without them the mod still works with its saved settings.
 
 ## 2.3.0-beta.1
 
