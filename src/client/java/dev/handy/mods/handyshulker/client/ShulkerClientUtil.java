@@ -1,11 +1,8 @@
 package dev.handy.mods.handyshulker.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import dev.handy.mods.handyshulker.config.CompactModeKey;
 import dev.handy.mods.handyshulker.config.HandyShulkerConfig;
-import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Shared client-side utilities for shulker tooltip behavior.
@@ -27,14 +24,13 @@ public final class ShulkerClientUtil {
 		CompactModeKey key = HandyShulkerConfig.get().compactModeKey;
 		if (key == null || key == CompactModeKey.NONE) return false;
 
-		Window window = Minecraft.getInstance().getWindow();
 		return switch (key) {
-			case SHIFT -> InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT)
-					|| InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
-			case CTRL -> InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL)
-					|| InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
-			case ALT -> InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_ALT)
-					|| InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_ALT);
+			case SHIFT -> InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
+					|| InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
+			case CTRL -> InputConstants.isKeyDown(InputConstants.KEY_LCONTROL)
+					|| InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
+			case ALT -> InputConstants.isKeyDown(InputConstants.KEY_LALT)
+					|| InputConstants.isKeyDown(InputConstants.KEY_RALT);
 			default -> false;
 		};
 	}

@@ -310,7 +310,10 @@ public class ClientShulkerTooltip implements ClientTooltipComponent {
 				centerX - maxWidth / 2,
 				y - 15,
 				DefaultTooltipPositioner.INSTANCE,
-				selectedStack.get(DataComponents.TOOLTIP_STYLE)
+				selectedStack.get(DataComponents.TOOLTIP_STYLE),
+				// 26.3-snapshot-7 added this flag; true keeps the pre-snapshot-7 spacing
+				// (extra gap after the title line only when there is more than one line).
+				true
 		);
 	}
 
